@@ -1,0 +1,1 @@
+ffmpeg -i ./TNI-MHPJ001-030_UK_UPPER_APR-LT.mov -vcodec libx264 -flags +ildct+ilme -x264opts tff=1 -b:v 9000k -acodec libfdk_aac -b:a 128k -pix_fmt yuv420p -f mp4 ./TNI-MHPJ001-030_UK_x264-tff_15-12-2015.mp4

@@ -1,0 +1,1 @@
+# find . -ipath '*FIN*FIN*' -name "*.mov.mp4" -exec bash -c 'for f; do base=${f##*/}; mv -- "$f" "${f%/*}/${base//.mov.mp4/.mp4}"; done' _ {} +
