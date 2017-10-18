@@ -2,14 +2,10 @@
 
 IFS=$'\n'
 
-if [ -z "${1+x}" ]; then
+if [ -z "${1+x}" ] || [ -z "${2+x}" ]; then
 	echo "	Please input source video and desired interval in seconds.
 	(i.e. an interval of 1 would create a thumbnail for every second,
 	whereas an interval of 60 would create a thumbnail for every minute of video)"
-elif [ -z "${2+x}" ]; then
-		echo "	Please input source video and desired interval in seconds.
-		(i.e. an interval of 1 would create a thumbnail for every second,
-		whereas an interval of 60 would create a thumbnail for every minute of video)"
 
 else
 
@@ -23,7 +19,7 @@ inFrames=$(	ffprobe -hide_banner -loglevel panic -pretty \
 						-of default=noprint_wrappers=1:nokey=1 -i $inVid)
 outToGrab=$(echo "$inFrames/$inRate" | bc)
 outFrames=$(echo "$outToGrab/25" | bc)
-tileHeight=$(echo "scale=2;$outFrames/5" | bc | xargs printf %.0f )
+tileHeight=$(echo "scale=2;$outFrames/4" | bc | xargs printf %.0f )
 
 
 mkdir -p "$bdIn/.ff_thumb"
@@ -34,7 +30,7 @@ ffmpeg 	-hide_banner -loglevel panic \
 ffmpeg 	-hide_banner -loglevel panic \
 				-pattern_type glob -y -i "$bdIn/.ff_thumb/$baseIn-*.png" \
 				-frames 1 \
-				-vf tile=5x$tileHeight:margin=4:padding=4 \
+				-vf tile=4x$tileHeight:margin=4:padding=4 \
 				$bdIn/$baseIn-thumb.png
 
 rm -Rf "$bdIn/.ff_thumb"
