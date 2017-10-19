@@ -49,6 +49,27 @@ ff_AudioInString = [
     '-channel_layout', 'stereo',
 ]
 
+
+def getAudioFileFromFilelist(filelist):
+    """Search for audiofile.
+
+    Searches for audio files in filelist,
+    returns filename if it ends in a known audio extention
+    """
+    for audioFile in filelist:
+        audioRoot, audioExt = os.path.splitext(audioFile)
+        if audioExt in ['.wav', '.aiff', '.aif']:
+            return audioFile
+# end getAudioFileFromFilelist
+
+
+def addAudioToFFCommand(audiofilepath, ffmpegcommand):
+    """Add audio input and ffmpeg arguments to ffmpeg Command."""
+    ffmpegcommand.extend(['-i', audiofilepath])
+    ffmpegcommand.extend(ff_AudioInString)
+# end addAudioToFFCommand
+
+
 if __name__ == "__main__":
     # Specify all inputs and outputs
     inFolder = sys.argv[1]
@@ -84,14 +105,15 @@ if __name__ == "__main__":
             ff_Command.extend(ffmpeg_inString)
             ff_Command.extend(['-y', '-i', videoInput])
 
-            seqPath = dirpath
-            for dirpath, dirnames, filenames in os.walk(seqPath):
-                for audioName in filenames:
-                    if audioName.endswith('aiff', 'aif', 'wav'):
-                        print('Found audio file, relaying with', audioName)
-                        AudioInFile = os.path.join(dirpath, audioName)
-                        ff_Command.extend(['-i', AudioInFile])
-                        ff_Command.extend(ff_AudioInString)
+            audioFileName = getAudioFileFromFilelist(filelist=filenames)
+            print(audioFileName)
+            if audioFileName is not None:
+                print('Found audio file, relaying with', audioFileName)
+                audioFullPath = os.path.join(dirpath, audioFileName)
+                addAudioToFFCommand(
+                    audiofilepath=audioFullPath,
+                    ffmpegcommand=ff_Command
+                )
 
             if outVar.lower() == 'master':
                 ff_Command.extend(ff_VidMasterArgs)
