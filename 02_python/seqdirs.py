@@ -2,7 +2,7 @@
 
 import sys
 import os
-import subprocess as sp
+# import subprocess as sp
 # import datetime
 # import json
 # from pprint import pprint
@@ -73,7 +73,6 @@ if __name__ == "__main__":
         dirnames[:] = [dirname
                        for dirname in dirnames
                        if not dirname.startswith(".")]
-        # print('dirnames is ', dirnames)
         for filename in filenames:
             if filename.endswith(inFormat):
                 inSequence.append(filename)
@@ -85,12 +84,14 @@ if __name__ == "__main__":
             ff_Command.extend(ffmpeg_inString)
             ff_Command.extend(['-y', '-i', videoInput])
 
-            for audiofilename in filenames:
-                if audiofilename.endswith(('aiff', 'aif', 'wav')):
-                    print('Found audio file, relaying with', audiofilename)
-                    AudioInFile = os.path.join(dirpath, audiofilename)
-                    ff_Command.extend(['-i', AudioInFile])
-                    ff_Command.extend(ff_AudioInString)
+            seqPath = dirpath
+            for dirpath, dirnames, filenames in os.walk(seqPath):
+                for audioName in filenames:
+                    if audioName.endswith('aiff', 'aif', 'wav'):
+                        print('Found audio file, relaying with', audioName)
+                        AudioInFile = os.path.join(dirpath, audioName)
+                        ff_Command.extend(['-i', AudioInFile])
+                        ff_Command.extend(ff_AudioInString)
 
             if outVar.lower() == 'master':
                 ff_Command.extend(ff_VidMasterArgs)
@@ -102,9 +103,9 @@ if __name__ == "__main__":
             inBase = os.path.basename(
                 os.path.abspath(inFolder)
                 )
-            # pathBase = os.path.basename(
-            #     os.path.dirname(dirpath)
-            #     )
+    # pathBase = os.path.basename(
+    #     os.path.dirname(dirpath)
+    #     )
             videoBase = os.path.basename(
                 os.path.abspath(dirpath)
                 )
@@ -121,27 +122,27 @@ if __name__ == "__main__":
             if not os.path.isdir(outDir):
                     os.makedirs(outDir)
             ff_Command.extend(['-aspect:0', '16:9', '-r', '25', outName])
-            # print("__________________")
-            # print(" ")
-            # print("pathBase is", pathBase)
-            # print(" ")
-            # print("inBase is", inBase)
-            # print(" ")
-            # print("videoBase is", videoBase)
-            # print(" ")
-            # print("++++++++++++++++++")
-            # print(" ")
-            # print("outDir is", outDir)
-            # print(" ")
-            # print("outName is", outName)
-            # print(" ")
-            # print("__________________")
-
+    # # print("__________________")
+    # # print(" ")
+    # # print("pathBase is", pathBase)
+    # # print(" ")
+    # # print("inBase is", inBase)
+    # # print(" ")
+    # # print("videoBase is", videoBase)
+    # # print(" ")
+    # # print("++++++++++++++++++")
+    # # print(" ")
+    # # print("outDir is", outDir)
+    # # print(" ")
+    # # print("outName is", outName)
+    # # print(" ")
+    # # print("__________________")
+    #
             print("Creating", os.path.basename(outName))
 
             # if not os.path.isfile(outName):
-            sp.run(ff_Command)
-            # print(" ".join(ff_Command))
+            # sp.run(ff_Command)
+            print(" ".join(ff_Command))
 
             print("Export done. Moving to next folder.")
             print(" ")
