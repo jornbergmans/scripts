@@ -21,6 +21,6 @@ if [ -z "${1+x}" ]; then
 
 else
 
-mkdir -p $4 && ffmpeg -i $f -i $a -c:v copy -map 0:0 -map 1:0 -c:a copy $4/$basef-$basea-$date.$3
+mkdir -p $4 && ffmpeg -i $f -i $a -c:v copy -map 0:0 -map 1:0 -c:a copy $4/$basef--$basea--$date.$3
 
 fi

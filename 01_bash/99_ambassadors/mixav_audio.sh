@@ -36,7 +36,8 @@ fi
 		if [ ! $foldercount -gt 0 ]; then
  			vf=$(find "$movfolder" -maxdepth 1 -type f -iname "*.mov" -o -iname "*.mp4" -o -iname "*.mxf" -and -not -iname ".*")
 			for v in $vf; do
-			basev=$(basename "$v")
+			vname="${v##*/}"
+			basev="${vname%.*}"
 			dirv=$(dirname "$v")
 			mkdir -p "$4/$dirv"
 			done
@@ -56,7 +57,8 @@ fi
 				if [[ "$numa" -gt 0 ]]; then
 					af=$(find "$dirv" -maxdepth 1 -type f -iname "*.aif*" -o -iname "*.wav" -and -not -iname ".*" )
 					for a in $af; do
-							basea=$(basename "$a")
+							aname="${a##*/}"
+							basea="${aname%.*}"
 							ffmpeg -hide_banner -y -i "$v" -i "$a" -c:v copy -map 0:0 -map 1:0 -c:a copy "$4/video-$basev--audio-$basea--date-created-$date.$3"
 					done
 # If there is no audio in the same folder, search the second input variable for audio files to use
