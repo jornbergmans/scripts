@@ -6,32 +6,33 @@ IFS=$'\n'
 	echo "
 	Please enter input info in the following order:
 	1. Input file or folder"
-	read 1
+	read inFolder
+	inFile=$(echo "$inFolder" | sed 's/^[ \t]*//;s/[ \t]*$//')
 	echo "2. Video Codec (specify 'vn' if the file is audio only)"
-	read 2
+	read vCodec
 	echo "3. Video Bitrate"
-	read 3
+	read vRate
 	echo "4. Audio Codec (specify 'an' is the file is video only)"
-	read 4
+	read aCodec
  	echo "5. Audio Bitrate"
-	read 5
+	read aRate
 	echo "6. Destination format"
-	read 6
+	read outFormat
 	echo "7. Destination folder"
-	read 7
+	read outFolder
 
 # else
 
-	vf=$(find $inFolder -type f -iname "*.mov" -o -iname "*.mp4" -o -iname "*.mxf" -o -iname "*.avi" -o -iname "*.wmv")
+	vf=$(find "$inFile" -type f -iname "*.mov" -o -iname "*.mp4" -o -iname "*.mxf" -o -iname "*.avi" -o -iname "*.wmv")
 		for f in $vf; do
 		basef=$(basename "$f")
 
-			if [ \( "$2" == "vn" \) ] || [ \( -z "$2" \) ]; then
-				ffmpeg -i -c:a $4 -b:a $5 -f $6 $7/$basef-audio.$6
-			elif  [ \( "$4" == "an" \) ] || [ \( -z "$4" \) ]; then
-				ffmpeg -i $f -c:v $2 -b:v $3 -f $6 $7/$basef-mute.$6
+			if [ \( "$vCodec" == "vn" \) ] || [ \( -z "$vCodec" \) ]; then
+				ffmpeg -i -c:a $aCodec -b:a $aRate -f $outFormat $outFolder/$basef-audio.$outFormat
+			elif  [ \( "$aCodec" == "an" \) ] || [ \( -z "$aCodec" \) ]; then
+				ffmpeg -i $f -c:v $vCodec -b:v $vRate -f $outFormat $outFolder/$basef-mute.$outFormat
 			else
-				ffmpeg -i $f -c:v $2 -b:v $3 -c:a $4 -b:a $5 -f $6 $7/$basef-audio.$6
+				ffmpeg -i $f -c:v $vCodec -b:v $vRate -c:a $aCodec -b:a $aRate -f $outFormat $outFolder/$basef-audio.$outFormat
 			fi
 
 		done
