@@ -4,8 +4,10 @@ IFS=$'\n'
 
 f=$1
 a=$2
-basef=$(basename "$f")
-basea=$(basename "$a")
+fname="${f##*/}"
+aname="${a##*/}"
+basef="${fname%.*}"
+basea="${aname%.*}"
 date=$(date +%Y%m%d-%H%M)
 
 if [ -z "${1+x}" ]; then
