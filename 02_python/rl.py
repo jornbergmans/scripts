@@ -111,6 +111,8 @@ if __name__ == "__main__":
     # print(avmix)
 
     if vint == aint:
+        if not os.path.isdir(outfolder):
+                os.makedirs(outfolder)
         if outformat == "mov":
             print("Creating Master file")
             sp.run(avmix)
