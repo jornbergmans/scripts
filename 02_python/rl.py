@@ -64,7 +64,7 @@ ff_master = [
 ff_ref = [
     '-c:v', 'libx264',
     '-c:a', 'aac',
-    '-b:v', outformat,
+    '-b:v', outformat + 'k',
     '-b:a', '160k',
     '-pix_fmt', 'yuv420p',
     '-profile:v', 'high',
