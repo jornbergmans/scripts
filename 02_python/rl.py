@@ -44,6 +44,14 @@ outname = os.path.join(
         outext
     )
 )
+outlog = os.path.join(
+    outfolder,
+    "{}_{}.{}".format(
+        os.path.splitext(basev)[0],
+        now,
+        'log'
+    )
+)
 
 ff_header = [
     '/usr/local/bin/ffmpeg', '-hide_banner',
@@ -113,12 +121,14 @@ if __name__ == "__main__":
     if vint == aint:
         if not os.path.isdir(outfolder):
                 os.makedirs(outfolder)
+        logfile = open(outlog, 'w')
         if outformat == "mov":
             print("Creating Master file")
-            sp.run(avmix)
+            # sp.run(avmix)
         elif outformat != "mov":
             print("Creating reference file")
-            sp.run(avmix)
+            # sp.run(avmix)
+        logfile.write(str(avmix))
         print("Done! Created file at ", outname)
     else:
         print("Length of video and audio files do not match!")
