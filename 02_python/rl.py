@@ -4,7 +4,7 @@ import subprocess as sp
 import sys
 import os
 import datetime
-# import json
+import json
 # from pprint import pprint
 
 if len(sys.argv) < 3:
@@ -128,7 +128,8 @@ if __name__ == "__main__":
         elif outformat != "mov":
             print("Creating reference file")
             # sp.run(avmix)
-        logfile.write(str(avmix))
+        # logfile.write(str(avmix))
+        logfile.write(" ".join(avmix))
         print("Done! Created file at ", outname)
     else:
         print("Length of video and audio files do not match!")
