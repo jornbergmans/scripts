@@ -12,6 +12,7 @@ import subprocess as sp
 import sys
 import os
 import datetime
+import utils
 
 if len(sys.argv) < 3:
     print("missing input")
@@ -73,7 +74,7 @@ def filterAudioFilesFromFilelist(filelist):
     returns list of files that end in a known audio extention
     """
     audioFileList = []
-    for audioFilter in filenames:
+    for audioFilter in filelist:
         audioRoot, audioExt = os.path.splitext(audioFilter)
         if audioExt in ['.wav', '.aiff', '.aif']:
             audioFileList.append(audioFilter)
@@ -171,7 +172,8 @@ if __name__ == "__main__":
 
     # Fill up the video and audio lists with filepath and duration of file
     for dirpath, dirnames, filenames in os.walk(vinFolder):
-        videoFileName = getVideoFileFromFileList(filelist=filenames)
+        filteredFileList = utils.filterHiddenFiles(filenames)
+        videoFileName = getVideoFileFromFileList(filelist=filteredFileList)
         if videoFileName is not None:
             fullVideoFilePath = os.path.join(dirpath, videoFileName)
             videoFileDur = getVideoLengthFromVideoFile(
@@ -183,7 +185,8 @@ if __name__ == "__main__":
                 )
 
     for dirpath, dirnames, filenames in os.walk(ainFolder):
-        audioFileList = filterAudioFilesFromFilelist(filenames)
+        filteredFileList = utils.filterHiddenFiles(filenames)
+        audioFileList = filterAudioFilesFromFilelist(filteredFileList)
         for audioFileName in audioFileList:
             if audioFileName is not None:
                 fullAudioFilePath = os.path.join(dirpath, audioFileName)

@@ -6,6 +6,7 @@ import os
 # import datetime
 # import json
 # from pprint import pprint
+import utils
 
 ffmpeg_inString = [
     '/usr/local/bin/ffmpeg',
@@ -91,10 +92,9 @@ if __name__ == "__main__":
 
     inSequence = []
     for dirpath, dirnames, filenames in os.walk(inFolder):
-        dirnames[:] = [dirname
-                       for dirname in dirnames
-                       if not dirname.startswith(".")]
-        for filename in filenames:
+        filteredDirList = utils.filterHiddenFiles(dirnames)
+        filteredFileList = utils.filterHiddenFiles(filenames)
+        for filename in filteredFileList:
             if filename.endswith(inFormat):
                 inSequence.append(filename)
 
@@ -105,7 +105,7 @@ if __name__ == "__main__":
             ff_Command.extend(ffmpeg_inString)
             ff_Command.extend(['-y', '-i', videoInput])
 
-            audioFileName = getAudioFileFromFilelist(filelist=filenames)
+            audioFileName = getAudioFileFromFilelist(filelist=filteredFileList)
             print(audioFileName)
             if audioFileName is not None:
                 print('Found audio file, relaying with', audioFileName)
