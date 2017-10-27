@@ -1,23 +1,25 @@
 #!/usr/local/bin/python3
+"""Script to combine audio and video files of the same length.
+
+Checks input files for length up to 6 decimals using ffprobe,
+then combines those two input files to a video,
+and transcodes to x264 if necessary
+"""
 
 import subprocess as sp
 import sys
 import os
 import datetime
-import json
-# from pprint import pprint
 
 if len(sys.argv) < 3:
     print("missing input")
     exit(1)
 
-# Specify all inputs and outputs
 vin = sys.argv[1]
 ain = sys.argv[2]
 outformat = sys.argv[3]
 outfolder = sys.argv[4]
 
-# specify variables used by our functions
 basev = os.path.basename(vin)
 now = datetime.datetime.now().strftime('%Y%m%d-%H%M')
 
@@ -84,8 +86,6 @@ ff_ref = [
 
 if __name__ == "__main__":
 
-    # return video and audio outputs as bytes, decode into float
-    # then round the float to nearest integer to compare vin to ain
     vprobe = []
     vprobe.extend(probe_header)
     vprobe.extend(['-i', vin])
@@ -103,7 +103,6 @@ if __name__ == "__main__":
         aprobe
     )
     aint = aout.decode()
-    # aint = float(aout.decode())
 
     ff_command = []
     ff_command.extend(ff_header)
@@ -116,7 +115,7 @@ if __name__ == "__main__":
     # test prints
     # print('audioint', aint)
     # print('vidint', vint)
-    # print(ff_command)
+    # print(" ".join(ff_command))
 
     if vint == aint:
         if not os.path.isdir(outfolder):
