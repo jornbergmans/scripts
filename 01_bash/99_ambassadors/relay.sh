@@ -22,7 +22,7 @@ if [ -z "${1+x}" ]; then
 	The output will be placed in the destination folder as both a Master (.mov) and Preview (.mp4) file.
 	"
 
-elif [[ "$3" == mov ]] || [[ "$3" == master ]]; then
+elif [[ "$3" == *mov ]] || [[ "$3" == master ]]; then
 	echo "Relaying audio to video as a Master file..."
 	mkdir -p $4
 		ffmpeg -hide_banner -loglevel panic -y -i "$f" -i "$a" \
@@ -30,7 +30,7 @@ elif [[ "$3" == mov ]] || [[ "$3" == master ]]; then
 			"$4/$basef-$date.mov"
 	echo "...Done! File created at $4/$basef-$date.mov"
 
-elif [[ "$3" != mov ]] || [[ "$3" != master ]]; then
+elif [[ "$3" != *mov ]] || [[ "$3" != master ]]; then
 	echo "Creating mp4 file..."
 	mkdir -p $4
 		ffmpeg -hide_banner -loglevel panic -y -i "$f" -i "$a" \

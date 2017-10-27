@@ -93,7 +93,7 @@ if __name__ == "__main__":
     vout = sp.check_output(
         vprobe
     )
-    vint = vout.decode()
+    vint = vout.decode().strip()
 
     aprobe = []
     aprobe.extend(probe_header)
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     aout = sp.check_output(
         aprobe
     )
-    aint = aout.decode()
+    aint = aout.decode().strip()
 
     ff_command = []
     ff_command.extend(ff_header)
@@ -113,18 +113,18 @@ if __name__ == "__main__":
         ff_command.extend(ff_ref)
 
     # test prints
-    # print('audioint', aint)
-    # print('vidint', vint)
+    print('audioint', {"audioint": aint})
+    print('vidint', vint)
     # print(" ".join(ff_command))
 
     if vint == aint:
         if not os.path.isdir(outfolder):
                 os.makedirs(outfolder)
         logfile = open(outlog, 'w')
-        if outformat == "mov":
+        if outformat == "mov" or outformat == "master":
             print("Creating Master file")
             sp.run(ff_command)
-        elif outformat != "mov":
+        elif outformat != "mov" or outformat != "master":
             print("Creating reference file")
             sp.run(ff_command)
         logfile.write(" ".join(ff_command))
