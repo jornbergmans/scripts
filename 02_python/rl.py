@@ -105,18 +105,18 @@ if __name__ == "__main__":
     aint = aout.decode()
     # aint = float(aout.decode())
 
-    avmix = []
-    avmix.extend(ff_header)
+    ff_command = []
+    ff_command.extend(ff_header)
 
     if outformat == "mov":
-        avmix.extend(ff_master)
+        ff_command.extend(ff_master)
     else:
-        avmix.extend(ff_ref)
+        ff_command.extend(ff_ref)
 
     # test prints
     # print('audioint', aint)
     # print('vidint', vint)
-    # print(avmix)
+    # print(ff_command)
 
     if vint == aint:
         if not os.path.isdir(outfolder):
@@ -124,11 +124,11 @@ if __name__ == "__main__":
         logfile = open(outlog, 'w')
         if outformat == "mov":
             print("Creating Master file")
-            sp.run(avmix)
+            sp.run(ff_command)
         elif outformat != "mov":
             print("Creating reference file")
-            sp.run(avmix)
-        logfile.write(" ".join(avmix))
+            sp.run(ff_command)
+        logfile.write(" ".join(ff_command))
         print("Done! Created file at ", outname)
     else:
         print("Length of video and audio files do not match!")
