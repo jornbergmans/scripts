@@ -124,11 +124,10 @@ if __name__ == "__main__":
         logfile = open(outlog, 'w')
         if outformat == "mov":
             print("Creating Master file")
-            # sp.run(avmix)
+            sp.run(avmix)
         elif outformat != "mov":
             print("Creating reference file")
-            # sp.run(avmix)
-        # logfile.write(str(avmix))
+            sp.run(avmix)
         logfile.write(" ".join(avmix))
         print("Done! Created file at ", outname)
     else:
