@@ -172,12 +172,9 @@ if __name__ == "__main__":
 
     # Fill up the video and audio lists with filepath and duration of file
     for dirpath, dirnames, filenames in os.walk(vinFolder):
-<<<<<<< HEAD
         videoFileName = getVideoFileFromFileList(filenames)
-=======
         filteredFileList = utils.filterHiddenFiles(filenames)
         videoFileName = getVideoFileFromFileList(filelist=filteredFileList)
->>>>>>> eb456ec7ce593be07f3cc67091c3588e25c0b4e0
         if videoFileName is not None:
             fullVideoFilePath = os.path.join(dirpath, videoFileName)
             videoFileDur = getVideoLengthFromVideoFile(
