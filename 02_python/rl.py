@@ -113,8 +113,8 @@ if __name__ == "__main__":
         ff_command.extend(ff_ref)
 
     # test prints
-    print('audioint', {"audioint": aint})
-    print('vidint', vint)
+    # print('audioint', {"audioint": aint})
+    # print('vidint', vint)
     # print(" ".join(ff_command))
 
     if vint == aint:
