@@ -7,10 +7,13 @@ sourcefolder=$2
 for checkfile in $checkfolder; do
 
   basefile=$(basename "$checkfile")
-  basepath=$(dirname "$checkfile")
+  # checkpath=$(dirname "$checkfile")
+  # basepath=$(basename "$checkpath")
   # echo $basefile
+  # echo $checkpath
+  # echo $basepath
 
-  sourcefile=$(find "$sourcefolder" -type f -ipath "$basepath" -iname "$basefile")
+  sourcefile=$(find "$sourcefolder" -type f -iname "$basefile")
   # echo $sourcefile
 
     checkhash=$(md5 -q "$checkfile")
