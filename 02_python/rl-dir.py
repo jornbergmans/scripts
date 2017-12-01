@@ -216,8 +216,8 @@ if __name__ == "__main__":
                 # define the name for the output files
                 basev = os.path.basename(vin)
                 basea = os.path.basename(ain)
-                outname = outputNamingBase(vin, ain) + outext
-                outlog = outputNamingBase(vin, ain) + '.log'
+                outname = outputNamingBase(vin, '___', ain) + outext
+                outlog = outputNamingBase(vin, '___', ain) + '.log'
 
                 # Extend the ffmpeg command with the proper export settings
                 if outformat == "mov":
@@ -239,3 +239,5 @@ if __name__ == "__main__":
                     sp.run(ff_command)
                 logfile.write(" ".join(ff_command))
                 print("Done! Created file at ", outname)
+            else:
+                print("Video and Audio are not the same length, exiting.")

@@ -1,6 +1,6 @@
 #!/usr/local/bin/python3
 
-import sys
+# import sys
 import os
 
 ffprobeString = [
@@ -33,7 +33,7 @@ inRate = input("Please specify desired thumbnail interval in seconds")
 vidBase = os.path.basename(inVid)
 grabDir = os.path.join(vidBase, '.ff_thumb')
 grabOut = os.path.join(
-    grabDir,"{}.{}".png
+    grabDir, "{}.{}".png
 )
 ffGrabCom = []
 ffGrabCom.extend(ffInString)

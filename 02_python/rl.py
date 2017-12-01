@@ -61,12 +61,12 @@ ff_header = [
     '-y',
     '-i', vin,
     '-i', ain,
-    '-map', '0:0', '-map', '1:0',
-]
+    '-filter_complex', '[1:a]ebur128=peak=true[outA]',
+    '-map', '0:v', '-map', '[outA]']
 
 ff_master = [
     '-c:v', 'copy',
-    '-c:a', 'copy',
+    '-ac', '2',
     '-f', 'mov',
     outname
 ]
