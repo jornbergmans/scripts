@@ -156,6 +156,7 @@ def outputNamingBase(video, audio):
         outfolder,
         "{}_{}_{}_{}".format(
             os.path.splitext(basev)[0],
+            '___',
             os.path.splitext(basea)[0],
             now,
         ))
@@ -216,8 +217,8 @@ if __name__ == "__main__":
                 # define the name for the output files
                 basev = os.path.basename(vin)
                 basea = os.path.basename(ain)
-                outname = outputNamingBase(vin, '___', ain) + outext
-                outlog = outputNamingBase(vin, '___', ain) + '.log'
+                outname = outputNamingBase(vin, ain) + outext
+                outlog = outputNamingBase(vin, ain) + '.log'
 
                 # Extend the ffmpeg command with the proper export settings
                 if outformat == "mov":
