@@ -59,7 +59,7 @@ ff_header = [
     '/usr/local/bin/ffmpeg', '-hide_banner',
     '-loglevel', 'warning',
     '-y',
-    '-i', vin,
+    '-an', '-i', vin,
     '-i', ain,
     '-map', '0:v', '-map', '1:a']
 
