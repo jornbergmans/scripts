@@ -216,8 +216,8 @@ if __name__ == "__main__":
                 # define the name for the output files
                 basev = os.path.basename(vin)
                 basea = os.path.basename(ain)
-                outname = outputNamingBase(vin, '___', ain) + outext
-                outlog = outputNamingBase(vin, '___', ain) + '.log'
+                outname = outputNamingBase(vin, '_', ain) + outext
+                outlog = outputNamingBase(vin, '_', ain) + '.log'
 
                 # Extend the ffmpeg command with the proper export settings
                 if outformat == "mov":
