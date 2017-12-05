@@ -65,7 +65,7 @@ ff_header = [
     '-map', '0:v', '-map', '[outA]']
 
 ff_master = [
-    '-c:v', 'copy',
+    '-c', 'copy',
     '-ac', '2',
     '-f', 'mov',
     outname
@@ -73,13 +73,13 @@ ff_master = [
 
 ff_ref = [
     '-c:v', 'libx264',
-    '-c:a', 'aac',
     '-b:v', outformat + 'k',
-    '-b:a', '160k',
     '-pix_fmt', 'yuv420p',
     '-profile:v', 'high',
     '-level', '41',
     '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2',
+    '-c:a', 'aac',
+    '-b:a', '320k',
     '-f', 'mp4',
     outname
 ]
