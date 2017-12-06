@@ -210,42 +210,41 @@ if __name__ == "__main__":
     # in the previous walk loops. If the audio duration matches
     # the video duration, build an export command
     for v in videoList:
-        print(v)
-        # for a in audioList:
-        #     vin = v.get('filepath')
-        #     ain = a.get('filepath')
-        #     # define the name for the output files
-        #     basev = os.path.basename(vin)
-        #     basea = os.path.basename(ain)
-        #     outname = outputNamingBase(vin, ain) + outext
-        #     outlog = outputNamingBase(vin, ain) + '.log'
-        #
-        #     if v.get('duration') != a.get('duration'):
-        #         print("Video and Audio are not the same length,"
-        #               " can not create", outname,)
-        #
-        #     elif v.get('duration') == a.get('duration'):
-        #         # Start creating the ffmpeg command for export
-        #         ff_command = []
-        #         ff_command.extend(ff_header)
-        #         ff_command.extend(['-i', vin, '-i', ain])
-        #         # Extend the ffmpeg command with the proper export settings
-        #         if outformat == "mov":
-        #             ff_command.extend(ff_master)
-        #         else:
-        #             ff_command.extend(ff_ref)
-        #         ff_command.append(outname)
-        #
-        #         # Create the output directory and
-        #         # execute the ffmpeg command
-        #         if not os.path.isdir(outfolder):
-        #                 os.makedirs(outfolder)
-        #         logfile = open(outlog, 'w')
-        #         if outformat == "mov" or outformat == "master":
-        #             print("Creating Master file")
-        #             sp.run(ff_command)
-        #         elif outformat != "mov" or outformat != "master":
-        #             print("Creating reference file")
-        #             sp.run(ff_command)
-        #         logfile.write(" ".join(ff_command))
-        #         print("Done! Created file at ", outname)
+        for a in audioList:
+            vin = v.get('filepath')
+            ain = a.get('filepath')
+            # define the name for the output files
+            basev = os.path.basename(vin)
+            basea = os.path.basename(ain)
+            outname = outputNamingBase(vin, ain) + outext
+            outlog = outputNamingBase(vin, ain) + '.log'
+
+            if v.get('duration') != a.get('duration'):
+                print("Video and Audio are not the same length,"
+                      " can not create", outname,)
+
+            elif v.get('duration') == a.get('duration'):
+                # Start creating the ffmpeg command for export
+                ff_command = []
+                ff_command.extend(ff_header)
+                ff_command.extend(['-i', vin, '-i', ain])
+                # Extend the ffmpeg command with the proper export settings
+                if outformat == "mov":
+                    ff_command.extend(ff_master)
+                else:
+                    ff_command.extend(ff_ref)
+                ff_command.append(outname)
+
+                # Create the output directory and
+                # execute the ffmpeg command
+                if not os.path.isdir(outfolder):
+                        os.makedirs(outfolder)
+                logfile = open(outlog, 'w')
+                if outformat == "mov" or outformat == "master":
+                    print("Creating Master file")
+                    sp.run(ff_command)
+                elif outformat != "mov" or outformat != "master":
+                    print("Creating reference file")
+                    sp.run(ff_command)
+                logfile.write(" ".join(ff_command))
+                print("Done! Created file at ", outname)
