@@ -154,10 +154,11 @@ def outputNamingBase(video, audio):
     """
     outbase = os.path.join(
         outfolder,
-        "{}_{}_{}_{}".format(
+        "{}_{}_{}_{}_{}".format(
             os.path.splitext(basev)[0],
             '___',
             os.path.splitext(basea)[0],
+            '___',
             now,
         ))
 
@@ -241,4 +242,5 @@ if __name__ == "__main__":
                 logfile.write(" ".join(ff_command))
                 print("Done! Created file at ", outname)
             else:
-                print("Video and Audio are not the same length, exiting.")
+                print("Video and Audio are not the same length,"
+                      " can not create", outname, ", exiting.")
