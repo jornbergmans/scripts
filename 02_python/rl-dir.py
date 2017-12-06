@@ -206,21 +206,23 @@ if __name__ == "__main__":
     # the video duration, build an export command
     for v in videoList:
         for a in audioList:
-            if v.get('duration') == a.get('duration'):
-                vin = v.get('filepath')
-                ain = a.get('filepath')
+            vin = v.get('filepath')
+            ain = a.get('filepath')
+            # define the name for the output files
+            basev = os.path.basename(vin)
+            basea = os.path.basename(ain)
+            outname = outputNamingBase(vin, ain) + outext
+            outlog = outputNamingBase(vin, ain) + '.log'
 
+            if v.get('duration') != a.get('duration'):
+                print("Video and Audio are not the same length,"
+                      " can not create", outname, ", exiting.")
+
+            elif v.get('duration') == a.get('duration'):
                 # Start creating the ffmpeg command for export
                 ff_command = []
                 ff_command.extend(ff_header)
                 ff_command.extend(['-i', vin, '-i', ain])
-
-                # define the name for the output files
-                basev = os.path.basename(vin)
-                basea = os.path.basename(ain)
-                outname = outputNamingBase(vin, ain) + outext
-                outlog = outputNamingBase(vin, ain) + '.log'
-
                 # Extend the ffmpeg command with the proper export settings
                 if outformat == "mov":
                     ff_command.extend(ff_master)
@@ -241,6 +243,3 @@ if __name__ == "__main__":
                     sp.run(ff_command)
                 logfile.write(" ".join(ff_command))
                 print("Done! Created file at ", outname)
-            else:
-                print("Video and Audio are not the same length,"
-                      " can not create", outname, ", exiting.")
