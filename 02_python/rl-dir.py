@@ -96,17 +96,19 @@ def getAudioFileFromFilelist(audiofiltered):
 # end getAudioFileFromFilelist
 
 
-def getVideoFileFromFileList(filelist):
+def getVideoFilesFromFileList(filelist):
     """Search for video file.
 
     Searches for video files in filelist,
     returns filename if it ends in a known video extention
     """
+    videoFileList = []
     for videoFile in filenames:
         videoRoot, videoExt = os.path.splitext(videoFile)
         if videoExt == ".mov":
-            return videoFile
-# end getVideoFileFromFilelist
+            videoFileList.append(videoFile)
+    return videoFileList
+# end getVideoFilesFromFileList
 
 
 def getAudioLengthFromAudioFile(audiofileforlengthcheck):
@@ -174,18 +176,21 @@ if __name__ == "__main__":
 
     # Fill up the video and audio lists with filepath and duration of file
     for dirpath, dirnames, filenames in os.walk(vinFolder):
-        videoFileName = getVideoFileFromFileList(filenames)
-        filteredFileList = utils.filterHiddenFiles(filenames)
-        videoFileName = getVideoFileFromFileList(filelist=filteredFileList)
-        if videoFileName is not None:
-            fullVideoFilePath = os.path.join(dirpath, videoFileName)
-            videoFileDur = getVideoLengthFromVideoFile(
-                        videofileforlengthcheck=fullVideoFilePath
+        # videoFileName = getVideoFilesFromFileList(filenames)
+        filteredVideoFileList = utils.filterHiddenFiles(filenames)
+        videoFileNames = getVideoFilesFromFileList(
+                        filelist=filteredVideoFileList
                         )
-            videoList.append(
-                {'filepath': fullVideoFilePath,
-                 'duration': videoFileDur}
-                )
+        if videoFileNames:
+            for videoFileName in videoFileNames:
+                fullVideoFilePath = os.path.join(dirpath, videoFileName)
+                videoFileDur = getVideoLengthFromVideoFile(
+                            videofileforlengthcheck=fullVideoFilePath
+                            )
+                videoList.append(
+                    {'filepath': fullVideoFilePath,
+                     'duration': videoFileDur}
+                    )
 
     for dirpath, dirnames, filenames in os.walk(ainFolder):
         filteredFileList = utils.filterHiddenFiles(filenames)
@@ -205,41 +210,42 @@ if __name__ == "__main__":
     # in the previous walk loops. If the audio duration matches
     # the video duration, build an export command
     for v in videoList:
-        for a in audioList:
-            vin = v.get('filepath')
-            ain = a.get('filepath')
-            # define the name for the output files
-            basev = os.path.basename(vin)
-            basea = os.path.basename(ain)
-            outname = outputNamingBase(vin, ain) + outext
-            outlog = outputNamingBase(vin, ain) + '.log'
-
-            if v.get('duration') != a.get('duration'):
-                print("Video and Audio are not the same length,"
-                      " can not create", outname, ", exiting.")
-
-            elif v.get('duration') == a.get('duration'):
-                # Start creating the ffmpeg command for export
-                ff_command = []
-                ff_command.extend(ff_header)
-                ff_command.extend(['-i', vin, '-i', ain])
-                # Extend the ffmpeg command with the proper export settings
-                if outformat == "mov":
-                    ff_command.extend(ff_master)
-                else:
-                    ff_command.extend(ff_ref)
-                ff_command.append(outname)
-
-                # Create the output directory and
-                # execute the ffmpeg command
-                if not os.path.isdir(outfolder):
-                        os.makedirs(outfolder)
-                logfile = open(outlog, 'w')
-                if outformat == "mov" or outformat == "master":
-                    print("Creating Master file")
-                    sp.run(ff_command)
-                elif outformat != "mov" or outformat != "master":
-                    print("Creating reference file")
-                    sp.run(ff_command)
-                logfile.write(" ".join(ff_command))
-                print("Done! Created file at ", outname)
+        print(v)
+        # for a in audioList:
+        #     vin = v.get('filepath')
+        #     ain = a.get('filepath')
+        #     # define the name for the output files
+        #     basev = os.path.basename(vin)
+        #     basea = os.path.basename(ain)
+        #     outname = outputNamingBase(vin, ain) + outext
+        #     outlog = outputNamingBase(vin, ain) + '.log'
+        #
+        #     if v.get('duration') != a.get('duration'):
+        #         print("Video and Audio are not the same length,"
+        #               " can not create", outname,)
+        #
+        #     elif v.get('duration') == a.get('duration'):
+        #         # Start creating the ffmpeg command for export
+        #         ff_command = []
+        #         ff_command.extend(ff_header)
+        #         ff_command.extend(['-i', vin, '-i', ain])
+        #         # Extend the ffmpeg command with the proper export settings
+        #         if outformat == "mov":
+        #             ff_command.extend(ff_master)
+        #         else:
+        #             ff_command.extend(ff_ref)
+        #         ff_command.append(outname)
+        #
+        #         # Create the output directory and
+        #         # execute the ffmpeg command
+        #         if not os.path.isdir(outfolder):
+        #                 os.makedirs(outfolder)
+        #         logfile = open(outlog, 'w')
+        #         if outformat == "mov" or outformat == "master":
+        #             print("Creating Master file")
+        #             sp.run(ff_command)
+        #         elif outformat != "mov" or outformat != "master":
+        #             print("Creating reference file")
+        #             sp.run(ff_command)
+        #         logfile.write(" ".join(ff_command))
+        #         print("Done! Created file at ", outname)
