@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 IFS=$'\n'
 
@@ -7,11 +7,13 @@ echo "Please input file"
 	inVid=$(echo "$inFile" | sed 's/^[ \t]*//;s/[ \t]*$//')
 if [[ -f ${inVid} ]]; then
 	echo "Thank You. Reading from file $inVid"
+echo "What is your preferred thumbnail interval in seconds?"
+	read inRate
+echo "Setting the interval to 1 thumbnail image per $inRate seconds"
 
 	bdIn=$(dirname "$inVid")
 	baseIn=$(basename "$inVid")
 
-	inRate="20"
 	inFrames=$(		ffprobe -hide_banner -loglevel panic -pretty \
 								-select_streams v:0 -show_entries stream=nb_frames \
 								-of default=noprint_wrappers=1:nokey=1 -i $inVid)
@@ -37,7 +39,7 @@ ffmpeg 	-hide_banner -loglevel panic \
 
 	echo " "
 	echo "Thumbnail output file created at $bdIn/$baseIn-thumb.png"
-	
+
 else
 	echo "$inVid is not a valid file. Please restart and input a valid source video file."
 	exit 1
