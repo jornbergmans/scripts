@@ -2,7 +2,7 @@
 
 import sys
 import os
-# import subprocess as sp
+import subprocess as sp
 # import datetime
 # import json
 # from pprint import pprint
@@ -162,13 +162,13 @@ if __name__ == "__main__":
     #
             print("Creating", os.path.basename(outName))
 
-            # if not os.path.isfile(outName):
-            # sp.run(ff_Command)
+            if not os.path.isfile(outName):
+            	sp.run(ff_Command)
             print(" ".join(ff_Command))
 
             print("Export done. Moving to next folder.")
             print(" ")
             # elif len(inSequence) == 0:
-            #     print("No", inFormat, "sequence found in", dirpath)
-            #     print("Moving to next folder.")
+#                 print("No", inFormat, "sequence found in", dirpath)
+#                 print("Moving to next folder.")
         inSequence = []
