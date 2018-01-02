@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 IFS=$'\n'
 today=`date '+%d-%m-%Y'`;

@@ -31,32 +31,33 @@ if [[ -f ${inVid} ]]; then
 
 	ffmpeg 	-hide_banner -loglevel panic \
 					-i $inVid -vf fps="1/$inRate",scale='480:-1' \
-					"$bdIn/.ff_thumb/$baseIn-%03d.tiff"
-		if [[ $inPad == "no" ]] || [[ $inPad == "n" ]] || [[ $inPad == "N" ]]; then
-						ffmpeg 	-hide_banner -loglevel panic \
-										-pattern_type glob -y -i "$bdIn/.ff_thumb/$baseIn-*.tiff" \
-										-frames 1 \
-										-vf tile=4x$tileHeight:margin=0:padding=0 \
-										$bdIn/$baseIn-thumb.tiff
-						ffmpeg 	-hide_banner -loglevel panic \
-										-pattern_type glob -y -i "$bdIn/.ff_thumb/$baseIn-*.tiff" \
-										-frames 1 \
-										-vf tile=4x$tileHeight:margin=0:padding=0 \
-										$bdIn/$baseIn-thumb.png
-		elif [[ $inPad == "yes" ]] || [[ $inPad == "y" ]] || [[ $inPad == "Y" ]]; then
-						ffmpeg 	-hide_banner -loglevel panic \
-										-pattern_type glob -y -i "$bdIn/.ff_thumb/$baseIn-*.tiff" \
-										-frames 1 \
-										-vf tile=4x$tileHeight:margin=4:padding=4 \
-										$bdIn/$baseIn-thumb.tiff
-						ffmpeg 	-hide_banner -loglevel panic \
-										-pattern_type glob -y -i "$bdIn/.ff_thumb/$baseIn-*.tiff" \
-										-frames 1 \
-										-vf tile=4x$tileHeight:margin=4:padding=4 \
-										$bdIn/$baseIn-thumb.png
-		fi
+ 					"$bdIn/.ff_thumb/$baseIn-%03d.tiff"
 
-	rm -Rf "$bdIn/.ff_thumb"
+	if [[ $inPad == "no" ]] || [[ $inPad == "n" ]] || [[ $inPad == "N" ]]; then
+					ffmpeg 	-hide_banner -loglevel panic \
+									-pattern_type glob -y -i "$bdIn/.ff_thumb/$baseIn-*.tiff" \
+									-frames 1 \
+									-vf tile=4x$tileHeight:margin=0:padding=0 \
+									$bdIn/$baseIn-thumb.tiff
+					ffmpeg 	-hide_banner -loglevel panic \
+									-pattern_type glob -y -i "$bdIn/.ff_thumb/$baseIn-*.tiff" \
+									-frames 1 \
+									-vf tile=4x$tileHeight:margin=0:padding=0 \
+									$bdIn/$baseIn-thumb.png
+	elif [[ $inPad == "yes" ]] || [[ $inPad == "y" ]] || [[ $inPad == "Y" ]]; then
+					ffmpeg 	-hide_banner -loglevel panic \
+									-pattern_type glob -y -i "$bdIn/.ff_thumb/$baseIn-*.tiff" \
+									-frames 1 \
+									-vf tile=4x$tileHeight:margin=4:padding=4 \
+									$bdIn/$baseIn-thumb.tiff
+					ffmpeg 	-hide_banner -loglevel panic \
+									-pattern_type glob -y -i "$bdIn/.ff_thumb/$baseIn-*.tiff" \
+									-frames 1 \
+									-vf tile=4x$tileHeight:margin=4:padding=4 \
+									$bdIn/$baseIn-thumb.png
+	fi
+
+	# rm -Rf "$bdIn/.ff_thumb"
 
 	echo " "
 	echo "Thumbnail output file created at $bdIn/$baseIn-thumb.png"
