@@ -163,8 +163,13 @@ if __name__ == "__main__":
             print("Creating", os.path.basename(outName))
 
             if not os.path.isfile(outName):
+<<<<<<< HEAD
             	sp.run(ff_Command)
             print(" ".join(ff_Command))
+=======
+                sp.run(ff_Command)
+#            print(" ".join(ff_Command))
+>>>>>>> 26aade6c7d6a7f2237beee2af9885333b9e9e5d3
 
             print("Export done. Moving to next folder.")
             print(" ")
