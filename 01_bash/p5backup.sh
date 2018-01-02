@@ -37,8 +37,9 @@ fi
 # if there is a running job, don't stop the service
 if [[ $i -ge 1 ]]; then
   echo "There are $i jobs running, can't shut down service."
+  exit 1
 # if we can shut down P5, lets do it
-elif [[ $nr -eq 0 && $i -eq 0 ]]; then
+elif [[ $nr -eq 1 && $i -eq 0 ]]; then
   echo "P5 service stopped, moving to backup"
 elif [[ $i -eq 0 ]]; then
   echo "Shutting down P5 service"
