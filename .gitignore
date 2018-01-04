@@ -1,2 +1,5 @@
 __pycache__
 .DS_Store
+./01_bash/noortje_rsync.sh
+./01_bash/testscript.sh
+./00_test/**/*.*
