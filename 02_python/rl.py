@@ -115,10 +115,12 @@ if __name__ == "__main__":
     # print('audioint', {"audioint": aint})
     # print('vidint', vint)
     # print(" ".join(ff_command))
-    logfile = open(outlog, 'w')
+
     if vint == aint:
+
         if not os.path.isdir(outfolder):
                 os.makedirs(outfolder)
+        logfile = open(outlog, 'w')
         if outformat == "mov" or outformat == "master":
             print("Creating Master file")
             sp.run(ff_command)
@@ -135,6 +137,7 @@ if __name__ == "__main__":
         if ctn_choice == "y" or ctn_choice == "yes":
             if not os.path.isdir(outfolder):
                     os.makedirs(outfolder)
+            logfile = open(outlog, 'w')
             if outformat == "mov" or outformat == "master":
                 print("Creating Master file")
                 sp.run(ff_command)
