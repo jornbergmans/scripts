@@ -115,11 +115,10 @@ if __name__ == "__main__":
     # print('audioint', {"audioint": aint})
     # print('vidint', vint)
     # print(" ".join(ff_command))
-
+    logfile = open(outlog, 'w')
     if vint == aint:
         if not os.path.isdir(outfolder):
                 os.makedirs(outfolder)
-        logfile = open(outlog, 'w')
         if outformat == "mov" or outformat == "master":
             print("Creating Master file")
             sp.run(ff_command)
@@ -132,3 +131,18 @@ if __name__ == "__main__":
         print("Length of video and audio files do not match!")
         print("Length of video file is " + str(vint) + " seconds")
         print("Length of audio file is " + str(aint) + " seconds")
+        ctn_choice = input("Continue? y/n     ")
+        if ctn_choice == "y" or ctn_choice == "yes":
+            if not os.path.isdir(outfolder):
+                    os.makedirs(outfolder)
+            if outformat == "mov" or outformat == "master":
+                print("Creating Master file")
+                sp.run(ff_command)
+            elif outformat != "mov" or outformat != "master":
+                print("Creating reference file")
+                sp.run(ff_command)
+            logfile.write(" ".join(ff_command))
+            print("Done! Created file at ", outname)
+        elif ctn_choice == "n" or ctn_choice == "no" or ctn_choice == "":
+            print("Exiting")
+            exit(1)
