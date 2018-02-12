@@ -33,9 +33,9 @@ elif [[ "$#" -ge 2 ]]; then
 
   ## After creating the folder, start the data transfer using rsync.
   ## Let us know what you're doing, and log it.
-    rsync -ahv --log-file="$2/$base2-$datetime.log" "$inFolder" "$2"
+    rsync -ahv "$inFolder" "$2"
   if [[ -n "$3" ]] || [[ -d "$3" ]]; then
-    rsync -ahv --log-file="$3/$base3-$datetime.log" "$inFolder" "$3"
+    rsync -ahv "$inFolder" "$3"
   fi
 
   ## Check all files for md5 checksum matches
@@ -57,14 +57,14 @@ elif [[ "$#" -ge 2 ]]; then
     md5Out1=$(md5 -q "$out1File")
     out1FileBase=$(basename $out1File)
 
-      mkdir -p "$2/md5"
-      echo "" >> "$2/md5/copyreport.log"
-      echo $inFileBase >> "$2/md5/copyreport.log"
-      echo "Input file location" - $inFile >> "$2/md5/copyreport.log"
-      echo "Input file hash - MD5 =" $md5In >> "$2/md5/copyreport.log"
-      echo "Copied file location" - $out1File >> "$2/md5/copyreport.log"
-      echo "Copied file hash - MD5 =" $md5Out1 >> "$2/md5/copyreport.log"
-      echo "" >> "$2/md5/copyreport.log"
+      mkdir -p "$2/reports-$datetime"
+      echo "" >> "$2/reports-$datetime/copyreport.log"
+      echo $inFileBase >> "$2/reports-$datetime/copyreport.log"
+      echo "Input file location" - $inFile >> "$2/reports-$datetime/copyreport.log"
+      echo "Input file hash - MD5 =" $md5In >> "$2/reports-$datetime/copyreport.log"
+      echo "Copied file location" - $out1File >> "$2/reports-$datetime/copyreport.log"
+      echo "Copied file hash - MD5 =" $md5Out1 >> "$2/reports-$datetime/copyreport.log"
+      echo "" >> "$2/reports-$datetime/copyreport.log"
 
 #echo "++++++++++"
 #echo "InFile"
@@ -86,10 +86,10 @@ elif [[ "$#" -ge 2 ]]; then
       echo "does not match checksum for $out1File"
       echo "Please varify files manually. This error will be logged."
       mkdir -p "$2/md5"
-      echo $inFileBase >> "$2/md5/mismatch.log"
-      echo "Input file hash - MD5" $inFile "=" $md5In >> "$2/md5/mismatch.log"
-      echo "Copied file hash - MD5" $out1File "=" $md5Out1 >> "$2/md5/mismatch.log"
-      echo "" >> "$2/md5/mismatch.log"
+      echo $inFileBase >> "$2/reports-$datetime/mismatch.log"
+      echo "Input file hash - MD5" $inFile "=" $md5In >> "$2/reports-$datetime/mismatch.log"
+      echo "Copied file hash - MD5" $out1File "=" $md5Out1 >> "$2/reports-$datetime/mismatch.log"
+      echo "" >> "$2/reports-$datetime/mismatch.log"
     fi
 
   ## do the same thing for the backup copy if the directory was supplied
@@ -99,22 +99,22 @@ elif [[ "$#" -ge 2 ]]; then
       out2FileBase=$(basename $out2File)
 
       mkdir -p "$3/md5"
-      echo "" >> "$3/md5/copyreport.log"
-      echo $inFileBase >> "$3/md5/copyreport.log"
-      echo "Input file location" - $inFile >> "$3/md5/copyreport.log"
-      echo "Input file hash - MD5 =" $md5In >> "$3/md5/copyreport.log"
-      echo "Copied file location" - $out1File >> "$3/md5/copyreport.log"
-      echo "Copied file hash - MD5 =" $md5Out1 >> "$3/md5/copyreport.log"
-      echo "" >> "$3/md5/copyreport.log"
+      echo "" >> "$3/reports-$datetime/copyreport.log"
+      echo $inFileBase >> "$3/reports-$datetime/copyreport.log"
+      echo "Input file location" - $inFile >> "$3/reports-$datetime/copyreport.log"
+      echo "Input file hash - MD5 =" $md5In >> "$3/reports-$datetime/copyreport.log"
+      echo "Copied file location" - $out1File >> "$3/reports-$datetime/copyreport.log"
+      echo "Copied file hash - MD5 =" $md5Out1 >> "$3/reports-$datetime/copyreport.log"
+      echo "" >> "$3/reports-$datetime/copyreport.log"
 
       if [[ "$md5In" != "$md5Out2" ]]; then
         echo "Hash mismatch! md5 checksum for file $inFile"
         echo "does not match checksum for $out2File"
         echo "Please varify files manually. This error will be logged."
-        echo $inFileBase >> "$3/md5/mismatch.log"
-        echo "Input file hash - MD5" $inFile "=" $md5In >> "$3/md5/mismatch.log"
-        echo "Copied file hash - MD5" $out2File "=" $md5Out2 >> "$3/md5/mismatch.log"
-        echo "" >> "$3/md5/mismatch.log"
+        echo $inFileBase >> "$3/reports-$datetime/mismatch.log"
+        echo "Input file hash - MD5" $inFile "=" $md5In >> "$3/reports-$datetime/mismatch.log"
+        echo "Copied file hash - MD5" $out2File "=" $md5Out2 >> "$3/reports-$datetime/mismatch.log"
+        echo "" >> "$3/reports-$datetime/mismatch.log"
       fi
     fi
   done
