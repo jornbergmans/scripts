@@ -19,7 +19,17 @@ if [[ $debug = debug ]] ; then
 # 	echo "Running script in live mode, please wait..."
 fi
 
-for zipfolder in $(find $zipdir -depth -type d); do
+if [[ -z $1 ]]; then
+	echo "Variables not set. Please input"
+	echo "1: Input folder"
+	echo "2: Dest folder"
+	echo "3: Search string"
+	echo "4: Debug mode"
+fi
+
+zipfolders=$(find $zipdir -depth -type d)
+
+for zipfolder in $zipfolders; do
 
 filelist=$(find $zipfolder -mindepth 1 -maxdepth 1 -type f -and -iname "*$3*" -and -not -iname ".*" -and -not -iname "*.zip")
 count=$(find $zipfolder -mindepth 1 -maxdepth 1 -type f -and -iname "*$3*" -and -not -iname ".*" -and -not -iname "*.zip" | wc -l)
