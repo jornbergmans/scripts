@@ -1,3 +1,4 @@
+#!/bin/bash
 INPUT="/Volumes/FINALS/MXF FILES/TEST/Aegis-Media_Regio-Bank-Weer_Billboard_Wordt.mov"
 INPUT="/Volumes/FINALS/MXF FILES/TEST/bird.avi"
 

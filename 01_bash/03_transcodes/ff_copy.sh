@@ -1,12 +1,12 @@
-#/bin/bash
+#!/bin/bash
 
 IFS=$'\n'
 
-	for 	f in $(find . -type f -iname "*.mp4"); do 
+	for 	f in $(find . -type f -iname "*.mp4"); do
 				ffmpeg 		-y -i "$f" -c:v copy -c:a copy \
 				-f mov $f.mov ;
 done
-		
+
 	for 	name in $(find . -name "*mp4.mov"); do
 				mv "${name}" ${name/mp4.mov/mov}
 	echo 	"$name"
