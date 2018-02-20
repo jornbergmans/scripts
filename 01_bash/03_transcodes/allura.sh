@@ -24,10 +24,6 @@ basef=$(basename "$f")
 	fi
 done
 
-# for mov in $(find "$2" -type f -iname "*.mov-*.*"); do
-# 		mv "${mov}" ${mov/.mov-/-}
-# done
-
 		# -auto-alt-ref 0 -arnr-type backward \
 		# -keyint_min 1 -force_key_frames "expr:gte(t,n_forced*1)" \
 		# -filter_complex "boxblur=chroma_radius=3,colorspace=bt709:bt709:dither=fsb,deband=direction=2" \
