@@ -33,8 +33,13 @@ probe_arguments = [
     '-of', 'default=noprint_wrappers=1:nokey=1',
 ]
 
+if outformat == "master":
+    outformat = "mov"
 if outformat == "mov":
     outext = "mov"
+elif outformat == "ref":
+    outformat = "8000"
+    outext = "mp4"
 else:
     outext = "mp4"
 

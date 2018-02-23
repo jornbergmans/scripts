@@ -35,9 +35,13 @@ probe_arguments = [
     '-of', 'default=noprint_wrappers=1:nokey=1',
 ]
 
+if outformat == "master":
+    outformat = "mov"
+
 if outformat == "mov":
     outext = ".mov"
 else:
+    outformat = "8000"
     outext = ".mp4"
 
 ff_header = [
@@ -219,42 +223,41 @@ if __name__ == "__main__":
             outname = outputNamingBase(vin, ain) + outext
             outlog = outputNamingBase(vin, ain) + '.log'
 
-            # Start creating the ffmpeg command for export
-            ff_command = []
-            ff_command.extend(ff_header)
-            ff_command.extend(['-i', vin, '-i', ain])
+            if v.get('duration') == a.get('duration'):
+                # Start creating the ffmpeg command for export
+                ff_command = []
+                ff_command.extend(ff_header)
+                ff_command.extend(['-i', vin, '-i', ain])
 
-            # Extend the ffmpeg command with the proper export settings
-            if outformat == "mov":
-                ff_command.extend(ff_master)
-            else:
-                ff_command.extend(ff_ref)
-            ff_command.append(outname)
+                # Extend the ffmpeg command with the proper export settings
+                if outformat == "mov":
+                    ff_command.extend(ff_master)
+                else:
+                    ff_command.extend(ff_ref)
+                ff_command.append(outname)
 
-            if v.get('duration') != a.get('duration'):
-                print("Length of video and audio files do not match!")
-                print("Length of video file is " +
-                      str(v.get('duration')) + " seconds")
-                print("Length of audio file is " +
-                      str(a.get('duration')) + " seconds")
-                ctn = input("Continue? y/n: ")
-                if ctn == "y" or ctn == "yes":
-                    if not os.path.isdir(outfolder):
-                        os.makedirs(outfolder)
-                        logfile = open(outlog, 'w')
-                    if outformat == "mov" or outformat == "master":
-                        print("Creating Master file")
-                        sp.run(ff_command)
-                    elif outformat != "mov" or outformat != "master":
-                        print("Creating reference file")
-                        sp.run(ff_command)
-                    logfile.write(" ".join(ff_command))
-                    print("Done! Created file at ", outname)
-                elif ctn == "n" or ctn == "no" or ctn == "":
-                    print("Exiting")
-                    exit(1)
-
-            elif v.get('duration') == a.get('duration'):
+            # if v.get('duration') != a.get('duration'):
+            #     print("Length of video and audio files do not match!")
+            #     print("Length of video file " + str(vin) + " is "
+            #           + str(v.get('duration')) + " seconds")
+            #     print("Length of audio file " + str(ain) + " is "
+            #           + str(a.get('duration')) + " seconds")
+            #     ctn = input("Continue? y/n: ")
+            #     if ctn == "y" or ctn == "yes":
+            #         if not os.path.isdir(outfolder):
+            #             os.makedirs(outfolder)
+            #             logfile = open(outlog, 'w')
+            #         if outformat == "mov" or outformat == "master":
+            #             print("Creating Master file")
+            #             sp.run(ff_command)
+            #         elif outformat != "mov" or outformat != "master":
+            #             print("Creating reference file")
+            #             sp.run(ff_command)
+            #         logfile.write(" ".join(ff_command))
+            #         print("Done! Created file at ", outname)
+            #     elif ctn == "n" or ctn == "no" or ctn == "":
+            #         print("Exiting")
+            #         exit(1)
 
                 # Create the output directory and
                 # execute the ffmpeg command
