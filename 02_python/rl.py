@@ -47,8 +47,6 @@ else:
     minrate = str((int(outformat)-2000))
     maxrate = str((int(outformat)+2000))
 
-print(outformat)
-
 outname = os.path.join(
     outfolder,
     "{}_{}.{}".format(
@@ -129,7 +127,7 @@ if __name__ == "__main__":
     # test prints
     # print('audioint', {"audioint": aint})
     # print('vidint', vint)
-    print(" ".join(ff_command))
+    # print(" ".join(ff_command))
 
     if vint == aint:
 
