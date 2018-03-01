@@ -33,15 +33,21 @@ probe_arguments = [
     '-of', 'default=noprint_wrappers=1:nokey=1',
 ]
 
-if outformat == "master":
-    outformat = "mov"
-if outformat == "mov":
-    outext = "mov"
-elif outformat == "ref":
-    outformat = "8000"
-    outext = "mp4"
+# Setting the bitrate and output format
+# for selected version of video
+if outformat == 'mov' or outformat == 'master':
+    outformat = 'mov'
+    outext = 'mov'
+    minrate = ''
+    maxrate = ''
 else:
-    outext = "mp4"
+    if outformat == 'mp4' or outformat == 'ref':
+        outformat = '10000'
+    outext = 'mp4'
+    minrate = str((int(outformat)-2000))
+    maxrate = str((int(outformat)+2000))
+
+print(outformat)
 
 outname = os.path.join(
     outfolder,
@@ -63,6 +69,7 @@ outlog = os.path.join(
 ff_header = [
     '/usr/local/bin/ffmpeg', '-hide_banner',
     '-loglevel', 'warning',
+    '-stats',
     '-y',
     '-an', '-i', vin,
     '-i', ain,
@@ -78,6 +85,9 @@ ff_master = [
 ff_ref = [
     '-c:v', 'libx264',
     '-b:v', outformat + 'k',
+    '-minrate', minrate + 'k',
+    '-maxrate', maxrate + 'k',
+    '-bufsize', maxrate + 'k',
     '-pix_fmt', 'yuv420p',
     '-profile:v', 'high',
     '-level', '41',
@@ -119,7 +129,7 @@ if __name__ == "__main__":
     # test prints
     # print('audioint', {"audioint": aint})
     # print('vidint', vint)
-    # print(" ".join(ff_command))
+    print(" ".join(ff_command))
 
     if vint == aint:
 
@@ -128,10 +138,10 @@ if __name__ == "__main__":
         logfile = open(outlog, 'w')
         if outformat == "mov" or outformat == "master":
             print("Creating Master file")
-            sp.run(ff_command)
+            # sp.run(ff_command)
         elif outformat != "mov" or outformat != "master":
             print("Creating reference file")
-            sp.run(ff_command)
+            # sp.run(ff_command)
         logfile.write(" ".join(ff_command))
         print("Done! Created file at ", outname)
     else:
@@ -144,11 +154,11 @@ if __name__ == "__main__":
                     os.makedirs(outfolder)
             logfile = open(outlog, 'w')
             if outformat == "mov" or outformat == "master":
-                print("Creating Master file")
+                # print("Creating Master file")
                 sp.run(ff_command)
             elif outformat != "mov" or outformat != "master":
                 print("Creating reference file")
-                sp.run(ff_command)
+                # sp.run(ff_command)
             logfile.write(" ".join(ff_command))
             print("Done! Created file at ", outname)
         elif ctn_choice == "n" or ctn_choice == "no" or ctn_choice == "":
