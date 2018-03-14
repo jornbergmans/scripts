@@ -7,11 +7,15 @@ datetime=$(date +%Y%m%d-%H%M)
 # The Hammer Chapter  #
 # # # # # # # # # # # #
 
-echo "DISK USAGE ON /AMBASSADORS_SHARED, FOLDER PATH" > /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/hammer_$datetime.csv
-du -kd1 /AMBASSADORS_SHARED | sed $'s/[[:blank:]]/,/;s/\/.*\///' | sort -nr >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/hammer_$datetime.csv
-echo " "
-echo "DISK USAGE ON /HAMMER, FOLDER PATH" >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/hammer_$datetime.csv
+# echo "DISK USAGE ON /AMBASSADORS_SHARED, FOLDER PATH" > /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/hammer_$datetime.csv
+du -kd1 /AMBASSADORS_SHARED | sed $'s/[[:blank:]]/,/;s/\/.*\///' | sort -nr >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/shared_$datetime.csv
+# echo " "
+# echo "DISK USAGE ON /HAMMER, FOLDER PATH" >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/hammer_$datetime.csv
 du -kd1 /HAMMER | sed $'s/[[:blank:]]/,/;s/\/.*\///' | sort -nr >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/hammer_$datetime.csv
+
+# # # # # # # # # # # #
+#    The Projects     #
+# # # # # # # # # # # #
 
 find /AMBASSADORS_SHARED/PROJECTS/ -type d -and -iname "*_p1??????" -and -not -ipath "*_p1??????/*_p1??????*" -exec du -kd0 {} \; \
   | sed 's/[[:blank:]]/,/g;s/\/.*\///' | sort -nr  >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/projs/projdirs_$datetime.csv
