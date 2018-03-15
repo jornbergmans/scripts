@@ -8,10 +8,10 @@ datetime=$(date +%Y%m%d-%H%M)
 # # # # # # # # # # # #
 
 # echo "DISK USAGE ON /AMBASSADORS_SHARED, FOLDER PATH" > /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/hammer_$datetime.csv
-du -kd1 /AMBASSADORS_SHARED | sed $'s/[[:blank:]]/,/;s/\/.*\///' | sort -nr >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/shared_$datetime.csv
+du -kd1 /AMBASSADORS_SHARED | sed $'s/[[:blank:]]/,/;s/\/.*\///' | sort -nr >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/shared/shared_$datetime.csv
 # echo " "
 # echo "DISK USAGE ON /HAMMER, FOLDER PATH" >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/hammer_$datetime.csv
-du -kd1 /HAMMER | sed $'s/[[:blank:]]/,/;s/\/.*\///' | sort -nr >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/hammer_$datetime.csv
+du -kd1 /HAMMER | sed $'s/[[:blank:]]/,/;s/\/.*\///' | sort -nr >> /AMBASSADORS_SHARED/USERS/Jorn/servsizes/hammer/hammer/hammer_$datetime.csv
 
 # # # # # # # # # # # #
 #    The Projects     #
