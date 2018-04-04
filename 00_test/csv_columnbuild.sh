@@ -29,28 +29,18 @@ echo -n "" > $csv_outputfile
 for csv_inputfile in $csv_allfiles; do
   while read line && [[ $line != "" ]]; do
     projectname=$(echo $line | sed 's/^\([^,]*\),//')
-    projectfound1=$(grep -w $projectname $csv_foundfile)
-    # | sed 's/^\([^,]*,\)\([^,]*\)/\2,\1/;s/\,$//'
-    echo "projectfound1 = $projectfound1" >> $csv_outputfile
+    projectfound1=$(grep -w "$projectname" $csv_foundfile)
     if [[ ! $projectfound1 ]]; then
       textline=1
-       echo "textline = $textline" >> $csv_outputfile
-       echo "projectname = $projectname" >> $csv_outputfile
-          # awk -v l1="$textline" -v p="$projectname" 'NR == l1 {print p} {print}' >> $csv_outputfile
-      # sed "${textline}s/$/${projectname}, /" >> $csv_outputfile
+
+          awk -v l1="$textline" -v p="$projectname" 'NR == l1 {print p}' >> $csv_outputfile
         for csv_foundfile in $csv_allfiles; do
-        textline=$(echo $textline + 1 | bc )
+        let "textline++"
         projectfound2=$(grep -w $projectname $csv_foundfile)
-        # | sed 's/^\([^,]*,\)\([^,]*\)/\2,\1/;s/\,$//'
         projectdata=$(echo $projectfound2 | sed 's/\,.*$//')
         if [[ $projectfound2 ]]; then
-          # echo -n ""
-         echo "textline = $textline" >> $csv_outputfile
-         echo "projectfound2 = $projectfound2" >> $csv_outputfile
-         echo "projectdata = $projectdata" >> $csv_outputfile
-          # awk -v l2="$textline" -v d="$projectdata" 'NR == l2 {print d} {print}' >> $csv_outputfile
-          # sed "${textline}s/$/${projectdata}, /" >> $csv_outputfile
-                fi
+          awk -v l2="$textline" -v d="$projectdata" 'NR == l2 {print d}' >> $csv_outputfile
+        fi
       done
     fi
   done < $csv_inputfile

@@ -6,7 +6,7 @@ if [[ ! $debug = live ]]; then
 	echo "Running in debug mode."
 	echo "Set toggle 'live' to remove Scans folders."
 elif [[ $debug = live ]]; then
-	echo "Running in love mode..."
+	echo "Running in live mode..."
 fi
 
 # Maak een lijst van de folders die in Scans staan
