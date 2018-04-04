@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -22,34 +22,53 @@
 # DIFFERENT APPROACH
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
+<<<<<<< HEAD
 csv_folder="$(echo $1 | sed 's/^[ \t]*//;s/\/[ \t]*$//')"
 csv_allfiles="$csv_folder/*.csv"
 csv_outputfile="$csv_folder.csv"
 echo $csv_outputfile
+=======
+csv_folder=$(echo "$1" | sed 's/^[ \t]*//;s/\/[ \t]*$//')
+csv_allfiles=$(find $csv_folder -maxdepth 1 -type f -iname "*.csv" -and -not -iname ".*")
+csv_outputfile=$csv_folder.csv
+>>>>>>> a4985ec00d86e9943bb57361dfd8abc15b70d6d2
 echo -n "" > $csv_outputfile
 for csv_inputfile in $csv_allfiles; do
   while read line && [[ $line != "" ]]; do
     projectname=$(echo $line | sed 's/^\([^,]*\),//')
-    projectfound1=$(cat $csv_outputfile | grep -w $projectname)
+    projectfound1=$(grep -w $projectname $csv_foundfile)
     # | sed 's/^\([^,]*,\)\([^,]*\)/\2,\1/;s/\,$//'
+    echo "projectfound1 = $projectfound1" >> $csv_outputfile
     if [[ ! $projectfound1 ]]; then
       textline=1
+<<<<<<< HEAD
       echo "$projectname, " >> $csv_outputfile
       # awk -v l1="$textline" -v p="$projectname" 'NR == l1 {print p} {print}' >> $csv_outputfile
       # sed "$textline"s/$/"$projectfound, "/ >> $csv_outputfile
       # echo "$projectname, " >> $csv_outputfile
+=======
+       echo "textline = $textline" >> $csv_outputfile
+       echo "projectname = $projectname" >> $csv_outputfile
+          # awk -v l1="$textline" -v p="$projectname" 'NR == l1 {print p} {print}' >> $csv_outputfile
+      # sed "${textline}s/$/${projectname}, /" >> $csv_outputfile
+>>>>>>> a4985ec00d86e9943bb57361dfd8abc15b70d6d2
         for csv_foundfile in $csv_allfiles; do
         textline=$(echo $textline + 1 | bc )
-        projectfound2=$(cat $csv_foundfile | grep -w $projectname)
+        projectfound2=$(grep -w $projectname $csv_foundfile)
         # | sed 's/^\([^,]*,\)\([^,]*\)/\2,\1/;s/\,$//'
         projectdata=$(echo $projectfound2 | sed 's/\,.*$//')
         if [[ $projectfound2 ]]; then
           # echo -n ""
+<<<<<<< HEAD
           echo "$projectdata, " >> $csv_outputfile
+=======
+         echo "textline = $textline" >> $csv_outputfile
+         echo "projectfound2 = $projectfound2" >> $csv_outputfile
+         echo "projectdata = $projectdata" >> $csv_outputfile
+>>>>>>> a4985ec00d86e9943bb57361dfd8abc15b70d6d2
           # awk -v l2="$textline" -v d="$projectdata" 'NR == l2 {print d} {print}' >> $csv_outputfile
-          # sed "$textline"s/$/"$projectdata, "/ >> $csv_outputfile
-          # echo "$projectdata, " >> $csv_outputfile
-        fi
+          # sed "${textline}s/$/${projectdata}, /" >> $csv_outputfile
+                fi
       done
     fi
   done < $csv_inputfile
