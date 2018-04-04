@@ -22,9 +22,10 @@
 # DIFFERENT APPROACH
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
-csv_folder="$1"
+csv_folder="$(echo $1 | sed 's/^[ \t]*//;s/\/[ \t]*$//')"
 csv_allfiles="$csv_folder/*.csv"
-csv_outputfile=$csv_folder.csv
+csv_outputfile="$csv_folder.csv"
+echo $csv_outputfile
 echo -n "" > $csv_outputfile
 for csv_inputfile in $csv_allfiles; do
   while read line && [[ $line != "" ]]; do
@@ -33,7 +34,7 @@ for csv_inputfile in $csv_allfiles; do
     # | sed 's/^\([^,]*,\)\([^,]*\)/\2,\1/;s/\,$//'
     if [[ ! $projectfound1 ]]; then
       textline=1
-      echo "projectdata = $projectname" >> $csv_outputfile
+      echo "$projectname, " >> $csv_outputfile
       # awk -v l1="$textline" -v p="$projectname" 'NR == l1 {print p} {print}' >> $csv_outputfile
       # sed "$textline"s/$/"$projectfound, "/ >> $csv_outputfile
       # echo "$projectname, " >> $csv_outputfile
@@ -44,7 +45,7 @@ for csv_inputfile in $csv_allfiles; do
         projectdata=$(echo $projectfound2 | sed 's/\,.*$//')
         if [[ $projectfound2 ]]; then
           # echo -n ""
-          echo "projectdata = $projectdata" >> $csv_outputfile
+          echo "$projectdata, " >> $csv_outputfile
           # awk -v l2="$textline" -v d="$projectdata" 'NR == l2 {print d} {print}' >> $csv_outputfile
           # sed "$textline"s/$/"$projectdata, "/ >> $csv_outputfile
           # echo "$projectdata, " >> $csv_outputfile

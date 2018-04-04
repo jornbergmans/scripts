@@ -1,8 +1,9 @@
 #!/bin/bash
 
 csvfile="$1"
-csvfolder=$(dirname $csvfile)
+csvloc=$(dirname $csvfile)
 csvbase=$(basename $csvfile)
+csvfoldername=$(basename "$(dirname $csvfile)")
 
 echo -n "" > ${csvfile/.csv/.tmp.csv}
 echo -n "[" >> ${csvfile/.csv/.tmp.csv}
@@ -24,7 +25,7 @@ echo -n "'$csvdate', " >> ${csvfile/.csv/.tmp.csv}
   while read line && [ "$line" != "" ]; do
     projectdata=$(echo $line | sed 's/^\([^,]*,\)\([^,]*\)/\2,\1/;s/\,$//' | sed 's/^\([^,]*\),//')
     echo -n "$projectdata, " >> ${csvfile/.csv/.tmp.csv}
-    othercsvfound=$(find $csvfolder -mindepth 1 -maxdepth 1 -type f -and -iname "*.csv" -and -not -iname "$csvbase" -and -not -iname ".*" -and -not -iname "*.*.csv"| sort)
+    othercsvfound=$(find $csvloc -mindepth 1 -maxdepth 1 -type f -and -iname "*-2200.csv" -and -not -iname "$csvbase" -and -not -iname ".*" -and -not -iname "*.*.csv"| sort)
   done < $csvfile
 echo -n "]," >> ${csvfile/.csv/.tmp.csv}
 echo "" >> ${csvfile/.csv/.tmp.csv}
@@ -47,7 +48,7 @@ echo "" >> ${csvfile/.csv/.tmp.csv}
     echo "]," >> ${csvfile/.csv/.tmp.csv}
   done
 
-cat ${csvfile/.csv/.tmp.csv} | sed 's/\(\,[[:blank:]]\]\,\)/\]\,/g' > ${csvfile/.csv/.cat.csv}
+cat ${csvfile/.csv/.tmp.csv} | sed 's/\(\,[[:blank:]]\]\,\)/\]\,/g' > $csvloc/$csvfoldername.csv && rm ${csvfile/.csv/.tmp.csv}
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #   cat ${csvfile/.csv/_temp.csv} > ${csvfile/.csv/_alldata.csv} && rm ${csvfile/.csv/_temp.csv}  #

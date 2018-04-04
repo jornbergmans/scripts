@@ -1,4 +1,4 @@
-#/bin/bash/
+#!/bin/bash/
 
 IFS=$'\n'
 
@@ -19,7 +19,7 @@ mkdir -p "$sourcedir/webm/"
 							-vf scale=w=640:h=360:force_original_aspect_ratio=decrease -qmin 0 -qmax 42 \
 							-auto-alt-ref 0 -lag-in-frames 0 -arnr-type backward \
 							-keyint_min 1 -f webm "$sourcedir/webm/$basevp-vp8-360p-$TODAY.webm"
-		
+
 done
 
 for name in $(find $sourcedir/webm -name "*.mov-vp8*.webm"); do
@@ -34,7 +34,7 @@ done
 	      #   		echo "Adding $bigfiles to zip file."
 	      #   		zip -q -j1 $2/$basedir-480p.zip $bigfiles \;
 	    		# done
-        		
+
        #  		for smallfiles in $smalllist; do
 	      #   		echo "Adding $smallfiles to zip file."
 	      #   		zip -q -j1 $2/$basedir-272p.zip $smallfiles \;

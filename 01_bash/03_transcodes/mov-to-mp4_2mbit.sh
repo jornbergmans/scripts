@@ -10,9 +10,11 @@ inFiles=$(find "$infolder" -type f -iname "*.mov")
 for f in $inFiles; do
 
 		basef=$(basename $f)
+		fdir=$(basename "$(dirname $f)")
+		mkdir -p $outfolder/$fdir
 		echo "$f"
 		ffmpeg -hide_banner -loglevel panic -stats -y -i "$f" -c:v libx264 -b:v 2000k -c:a libfdk_aac -b:a 96k \
-		-pix_fmt yuv420p -profile:v main -level 3.1 -f mp4 $outfolder/${basef/.mov/-ref.mp4} ;
+		-pix_fmt yuv420p -profile:v main -level 3.1 -f mp4 $outfolder/$fdir/${basef/.mov/-ref.mp4} ;
 		echo " "
 done
 
