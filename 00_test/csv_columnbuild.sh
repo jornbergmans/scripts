@@ -36,11 +36,10 @@ echo -n "" > $csv_outputfile
 for csv_inputfile in $csv_allfiles; do
   while read line && [[ $line != "" ]]; do
     projectname=$(echo $line | sed 's/^\([^,]*\),//')
-    projectfound1=$(grep -w $projectname $csv_foundfile)
-    # | sed 's/^\([^,]*,\)\([^,]*\)/\2,\1/;s/\,$//'
-    echo "projectfound1 = $projectfound1" >> $csv_outputfile
+    projectfound1=$(grep -w "$projectname" $csv_foundfile)
     if [[ ! $projectfound1 ]]; then
       textline=1
+<<<<<<< HEAD
 <<<<<<< HEAD
       echo "$projectname, " >> $csv_outputfile
       # awk -v l1="$textline" -v p="$projectname" 'NR == l1 {print p} {print}' >> $csv_outputfile
@@ -52,12 +51,16 @@ for csv_inputfile in $csv_allfiles; do
           # awk -v l1="$textline" -v p="$projectname" 'NR == l1 {print p} {print}' >> $csv_outputfile
       # sed "${textline}s/$/${projectname}, /" >> $csv_outputfile
 >>>>>>> a4985ec00d86e9943bb57361dfd8abc15b70d6d2
+=======
+
+          awk -v l1="$textline" -v p="$projectname" 'NR == l1 {print p}' >> $csv_outputfile
+>>>>>>> 3cdee636f1074470ffe6ebdbc3489412431e1496
         for csv_foundfile in $csv_allfiles; do
-        textline=$(echo $textline + 1 | bc )
+        let "textline++"
         projectfound2=$(grep -w $projectname $csv_foundfile)
-        # | sed 's/^\([^,]*,\)\([^,]*\)/\2,\1/;s/\,$//'
         projectdata=$(echo $projectfound2 | sed 's/\,.*$//')
         if [[ $projectfound2 ]]; then
+<<<<<<< HEAD
           # echo -n ""
 <<<<<<< HEAD
           echo "$projectdata, " >> $csv_outputfile
@@ -69,6 +72,10 @@ for csv_inputfile in $csv_allfiles; do
           # awk -v l2="$textline" -v d="$projectdata" 'NR == l2 {print d} {print}' >> $csv_outputfile
           # sed "${textline}s/$/${projectdata}, /" >> $csv_outputfile
                 fi
+=======
+          awk -v l2="$textline" -v d="$projectdata" 'NR == l2 {print d}' >> $csv_outputfile
+        fi
+>>>>>>> 3cdee636f1074470ffe6ebdbc3489412431e1496
       done
     fi
   done < $csv_inputfile

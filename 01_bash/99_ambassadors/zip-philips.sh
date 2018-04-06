@@ -39,7 +39,7 @@ dirdest=$(dirname "$zipfolder")
 zipname=$(basename "$dirdest")
 #basedest=$(echo $zipfolder | sed 's:/Volumes/::')
 
-#   	if [[ $count -gt 20 ]]; then
+  	if [[ $count -gt 1 ]]; then
 
 			# echo "basedest = $basedest"
 			# echo "dirdest = $dirdest"
@@ -82,7 +82,7 @@ zipname=$(basename "$dirdest")
        # $filelist -delete
    	  fi
 
-#    fi
+   fi
 
 done
 
