@@ -3,23 +3,23 @@ IFS=$'\n'
 
 # # #
 
-zipdir=$1
-dest=$2
+zipdir="$1"
+dest="$2"
 
-debug=$4
+debug="$4"
 if [[ -n "$debug" ]]; then
-	debug=$4
+	debug="$4"
 else
 	debug=debug
 fi
 
-if [[ $debug = debug ]] ; then
+if [[ "$debug" = debug ]] ; then
   echo "Debug mode on. Checking for folders to zip, please wait..."
 # elif [[ $debug = "true|false|live" ]] ; then
 # 	echo "Running script in live mode, please wait..."
 fi
 
-if [[ -z $1 ]]; then
+if [[ -z "$1" ]]; then
 	echo "Variables not set. Please input"
 	echo "1: Input folder"
 	echo "2: Dest folder"
@@ -27,7 +27,7 @@ if [[ -z $1 ]]; then
 	echo "4: Debug mode"
 fi
 
-zipfolders=$(find $zipdir -depth -type d)
+zipfolders=$(find "$zipdir" -depth -type d)
 
 for zipfolder in $zipfolders; do
 
@@ -39,7 +39,7 @@ dirdest=$(dirname "$zipfolder")
 zipname=$(basename "$dirdest")
 #basedest=$(echo $zipfolder | sed 's:/Volumes/::')
 
-  	if [[ $count -gt 1 ]]; then
+  	if [[ "$count" -gt 1 ]]; then
 
 			# echo "basedest = $basedest"
 			# echo "dirdest = $dirdest"
@@ -47,7 +47,7 @@ zipname=$(basename "$dirdest")
 			# echo "full name will be $dest/$zipname/$zipname-$basedest.zip"
 			# fi
 
-   	  if [[ $debug = debug ]] ; then
+   	  if [[ "$debug" = debug ]] ; then
         echo " "
         echo "I will archive $count files in $zipfolder that contain the string \"$3\""
     	  else
