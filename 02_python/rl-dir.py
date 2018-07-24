@@ -46,7 +46,8 @@ else:
 
 ff_header = [
     '/usr/local/bin/ffmpeg', '-hide_banner',
-    '-loglevel', 'panic',
+    '-loglevel', 'warning',
+    '-stats',
     '-y',
 ]
 
@@ -167,9 +168,35 @@ def outputNamingBase(video, audio):
             '___',
             now,
         ))
-
     return outbase
 # end outputNamingBase
+
+
+def makeOutputFile():
+    """Start building the output file settings."""
+    ff_command = []
+    ff_command.extend(ff_header)
+    ff_command.extend(['-i', vin, '-i', ain])
+
+    # Extend the ffmpeg command with the proper export settings
+    if outformat == "mov":
+        ff_command.extend(ff_master)
+    else:
+        ff_command.extend(ff_ref)
+    ff_command.append(outname)
+
+    if not os.path.isdir(outfolder):
+                os.makedirs(outfolder)
+    logfile = open(outlog, 'w')
+    if outformat == "mov" or outformat == "master":
+        print("Creating Master file")
+        sp.run(ff_command)
+    elif outformat != "mov" or outformat != "master":
+        print("Creating reference file")
+        sp.run(ff_command)
+    logfile.write(" ".join(ff_command))
+    print("Done! Created file at ", outname)
+    # end makeOutputFile
 
 
 if __name__ == "__main__":
@@ -182,11 +209,9 @@ if __name__ == "__main__":
     for dirpath, dirnames, filenames in os.walk(vinFolder):
         # videoFileName = getVideoFilesFromFileList(filenames)
         filteredVideoFileList = utils.filterHiddenFiles(filenames)
-        videoFileNames = getVideoFilesFromFileList(
-                        filelist=filteredVideoFileList
-                        )
-        if videoFileNames:
-            for videoFileName in videoFileNames:
+        videoFileList = getVideoFilesFromFileList(filteredVideoFileList)
+        if videoFileList:
+            for videoFileName in videoFileList:
                 fullVideoFilePath = os.path.join(dirpath, videoFileName)
                 videoFileDur = getVideoLengthFromVideoFile(
                             videofileforlengthcheck=fullVideoFilePath
@@ -197,8 +222,8 @@ if __name__ == "__main__":
                     )
 
     for dirpath, dirnames, filenames in os.walk(ainFolder):
-        filteredFileList = utils.filterHiddenFiles(filenames)
-        audioFileList = filterAudioFilesFromFilelist(filteredFileList)
+        filteredAudioFileList = utils.filterHiddenFiles(filenames)
+        audioFileList = filterAudioFilesFromFilelist(filteredAudioFileList)
         for audioFileName in audioFileList:
             if audioFileName is not None:
                 fullAudioFilePath = os.path.join(dirpath, audioFileName)
@@ -224,51 +249,19 @@ if __name__ == "__main__":
             outlog = outputNamingBase(vin, ain) + '.log'
 
             if v.get('duration') == a.get('duration'):
-                # Start creating the ffmpeg command for export
-                ff_command = []
-                ff_command.extend(ff_header)
-                ff_command.extend(['-i', vin, '-i', ain])
+                makeOutputFile()
 
-                # Extend the ffmpeg command with the proper export settings
-                if outformat == "mov":
-                    ff_command.extend(ff_master)
-                else:
-                    ff_command.extend(ff_ref)
-                ff_command.append(outname)
-
-            # if v.get('duration') != a.get('duration'):
-            #     print("Length of video and audio files do not match!")
-            #     print("Length of video file " + str(vin) + " is "
-            #           + str(v.get('duration')) + " seconds")
-            #     print("Length of audio file " + str(ain) + " is "
-            #           + str(a.get('duration')) + " seconds")
-            #     ctn = input("Continue? y/n: ")
-            #     if ctn == "y" or ctn == "yes":
-            #         if not os.path.isdir(outfolder):
-            #             os.makedirs(outfolder)
-            #             logfile = open(outlog, 'w')
-            #         if outformat == "mov" or outformat == "master":
-            #             print("Creating Master file")
-            #             sp.run(ff_command)
-            #         elif outformat != "mov" or outformat != "master":
-            #             print("Creating reference file")
-            #             sp.run(ff_command)
-            #         logfile.write(" ".join(ff_command))
-            #         print("Done! Created file at ", outname)
-            #     elif ctn == "n" or ctn == "no" or ctn == "":
-            #         print("Exiting")
-            #         exit(1)
-
+            elif v.get('duration') != a.get('duration'):
+                print("Length of video and audio files do not match!")
+                print("Length of video file " + str(vin) + " is "
+                      + str(v.get('duration')) + " seconds")
+                print("Length of audio file " + str(ain) + " is "
+                      + str(a.get('duration')) + " seconds")
+                ctn = input("Continue? y/n: ")
+                if ctn == "y" or ctn == "yes":
+                    makeOutputFile()
+                elif ctn == "n" or ctn == "no":
+                    print("Exiting")
+                    exit(1)
                 # Create the output directory and
                 # execute the ffmpeg command
-                if not os.path.isdir(outfolder):
-                        os.makedirs(outfolder)
-                logfile = open(outlog, 'w')
-                if outformat == "mov" or outformat == "master":
-                    print("Creating Master file")
-                    sp.run(ff_command)
-                elif outformat != "mov" or outformat != "master":
-                    print("Creating reference file")
-                    sp.run(ff_command)
-                logfile.write(" ".join(ff_command))
-                print("Done! Created file at ", outname)
