@@ -257,11 +257,11 @@ if __name__ == "__main__":
                       + str(v.get('duration')) + " seconds")
                 print("Length of audio file " + str(ain) + " is "
                       + str(a.get('duration')) + " seconds")
-                ctn = input("Continue? y/n: ")
-                if ctn == "y" or ctn == "yes":
-                    makeOutputFile()
-                elif ctn == "n" or ctn == "no":
-                    print("Exiting")
-                    exit(1)
-                # Create the output directory and
+                # ctn = input("Continue? y/n: ")
+                # if ctn == "y" or ctn == "yes":
+                #     makeOutputFile()
+                # elif ctn == "n" or ctn == "no":
+                #     print("Exiting")
+                #     exit(1)
+                # # Create the output directory and
                 # execute the ffmpeg command
