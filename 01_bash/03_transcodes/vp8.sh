@@ -1,31 +1,33 @@
-#!/bin/bash/
+#!/usr/bin/env bash
 
 IFS=$'\n'
 
-sourcedir=$1
-targetdir=$2
+sourcedir="$1"
+targetdir="$2"
+targetrate="$3"
 TODAY=$(date "+%d-%m-%Y");
 basedir=$(basename "$sourcedir")
+sourcefiles=$(find $sourcedir -and -not -iname ".*" -and -iname "*.mov" -or -iname "*.mp4")
 
-for i in $(find $sourcedir -and -not -iname ".*" -and -iname "*.mov" -or -iname "*.mp4"); do
+for i in "$sourcefiles"; do
 
 basevp=$(basename "$i")
 
-mkdir -p "$sourcedir/webm/"
+mkdir -p "$targetdir/webm/"
 
 		ffmpeg -y -i "$i" \
-							-c:v libvpx -b:v 450k -threads 1 -speed 0 \
-							-c:a libvorbis -b:a 96k \
-							-vf scale=w=640:h=360:force_original_aspect_ratio=decrease -qmin 0 -qmax 42 \
+							-c:v libvpx -b:v "$3"k -threads 1 -speed 0 \
+							-c:a libvorbis -b:a 192k \
+							-vf scale=w=1920:h=-1:force_original_aspect_ratio=decrease -qmin 0 -qmax 42 \
 							-auto-alt-ref 0 -lag-in-frames 0 -arnr-type backward \
-							-keyint_min 1 -f webm "$sourcedir/webm/$basevp-vp8-360p-$TODAY.webm"
+							-keyint_min 1 -f webm "$targetdir/webm/${basevp/.*/_vp8_$TODAY.webm}"
 
 done
 
-for name in $(find $sourcedir/webm -name "*.mov-vp8*.webm"); do
-	mv "${name}" ${name/.mov-vp8/-vp8}
-	echo "$name"
-done
+#for name in $(find $sourcedir/webm -name "*.mov-vp8*.webm"); do
+#	mv "${name}" ${name/.mov-vp8/-vp8}
+#	echo "$name"
+#done
 
 # biglist=$(find $sourcedir/webm -type f -and -iname "*480*.webm" -and -not -iname ".*")
 # smalllist=$(find $sourcedir/webm -type f -and -iname "*272*.webm" -and -not -iname ".*")

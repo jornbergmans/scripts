@@ -110,7 +110,7 @@ def getVideoFilesFromFileList(filelist):
     videoFileList = []
     for videoFile in filenames:
         videoRoot, videoExt = os.path.splitext(videoFile)
-        if videoExt == ".mov":
+        if videoExt in ['.mov', '.mp4', '.mkv', '.avi']:
             videoFileList.append(videoFile)
     return videoFileList
 # end getVideoFilesFromFileList

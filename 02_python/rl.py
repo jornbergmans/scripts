@@ -71,7 +71,8 @@ ff_header = [
     '-y',
     '-an', '-i', vin,
     '-i', ain,
-    '-map', '0:v', '-map', '1:a']
+    '-map', '0:v', '-map', '1:a'
+]
 
 ff_master = [
     '-c', 'copy',

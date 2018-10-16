@@ -27,7 +27,7 @@ else
 	rez="$3"
 	debug="$4"
 fi
-filelist=$(find "$inputfolder" -iname "*GIF*.mov" -not -iname "._*")
+filelist=$(find "$inputfolder" -iname "*.mov" -not -iname "._*")
 
  for f in $filelist; do
  	 basef=$(basename "$f")
@@ -46,7 +46,7 @@ filelist=$(find "$inputfolder" -iname "*GIF*.mov" -not -iname "._*")
  		else
 		 echo "Creating palette for $basef"
 				ffmpeg -hide_banner -loglevel panic -y -i "$f" -vf fps=10,scale=-1:1080:flags=lanczos,palettegen "$outputdir/${basef/.mov/_palette.png}"
-		 echo "Creating GIF file at $2 frames per second"
+		 echo "Creating GIF file at $outputrate frames per second"
 				ffmpeg -hide_banner -loglevel panic -y -i "$f" -i "$outputdir"/"${basef/.mov/_palette.png}" -filter_complex \
 				"fps=$outputrate,scale=-1:$rez:flags=lanczos[x];[x][1:v]paletteuse" -f gif "$outputdir/${basef/.mov/_"$rez"p"$outputrate".gif}"
 		 echo "GIF file created at $outputdir/${basef/.mov/_"$rez"p"$outputrate".gif}"
