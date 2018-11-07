@@ -1,107 +1,82 @@
 #!/bin/bash
 IFS=$'\n'
 
-# # #
-
 zipdir="$1"
 dest="$2"
-
+sstring="$3"
 debug="$4"
-if [[ -n "$debug" ]]; then
-	debug="$4"
-else
-	debug=debug
-fi
 
-if [[ "$debug" = debug ]] ; then
+function makeref() {
+  ffmpeg -hide_banner -loglevel panic -pattern_type glob \
+  -y -i "$zipfolder/*.$sstring" -c:v libx264 -b:v 2500k \
+  -pix_fmt yuv420p -r 25 -f mp4 "$output.mp4"
+}
+
+if [[ ! "$debug" = false ]] ; then
+  echo ""
   echo "Debug mode on. Checking for folders to zip, please wait..."
-# elif [[ $debug = "true|false|live" ]] ; then
-# 	echo "Running script in live mode, please wait..."
+  echo ""
 fi
 
-if [[ -z "$1" ]]; then
-	echo "Variables not set. Please input"
-	echo "1: Input folder"
-	echo "2: Dest folder"
-	echo "3: Search string"
-	echo "4: Debug mode"
-fi
+if [[ -z "$1" ]] && [[ -z "$2" ]] && [[ -z "$3" ]]; then
+  echo "Variables not set. Please input"
+  echo "1: Input folder"
+  echo "2: Dest folder"
+  echo "3: Search string"
+  echo "4: Debug mode - input 'false' to run live mode"
+else
+  zipfolders=$(find "$zipdir" -depth -type d)
 
-zipfolders=$(find "$zipdir" -depth -type d)
+  for zipfolder in $zipfolders; do
 
-for zipfolder in $zipfolders; do
+    filelist=$(find "$zipfolder" -mindepth 1 -maxdepth 1 -type f -and -iname "*$sstring*" -and -not -iname ".*" -and -not -iname "*.zip")
+    count=$(find "$zipfolder" -mindepth 1 -maxdepth 1 -type f -and -iname "*$sstring*" -and -not -iname ".*" -and -not -iname "*.zip" | wc -l)
 
-filelist=$(find $zipfolder -mindepth 1 -maxdepth 1 -type f -and -iname "*$3*" -and -not -iname ".*" -and -not -iname "*.zip")
-count=$(find $zipfolder -mindepth 1 -maxdepth 1 -type f -and -iname "*$3*" -and -not -iname ".*" -and -not -iname "*.zip" | wc -l)
+    basedest=$(basename "$zipfolder")
+    dirdest=$(dirname "$zipfolder")
+    zipname=$(basename "$dirdest")
+    output="$dest"/"$zipname"/360_"$zipname"_"$basedest"
 
-basedest=$(basename "$zipfolder")
-dirdest=$(dirname "$zipfolder")
-zipname=$(basename "$dirdest")
-#basedest=$(echo $zipfolder | sed 's:/Volumes/::')
-
-  	if [[ "$count" -gt 1 ]]; then
-
-			# echo "basedest = $basedest"
-			# echo "dirdest = $dirdest"
-			# echo "zipname = $zipname"
-			# echo "full name will be $dest/$zipname/$zipname-$basedest.zip"
-			# fi
-
-   	  if [[ "$debug" = debug ]] ; then
+    if [[ "$count" -gt 1 ]]; then
+      if [[ ! "$debug" = false ]] ; then
+        echo "basedest = $basedest"
+        echo "dirdest = $dirdest"
+        echo "zipname = $zipname"
+        echo "full output path will be $output.zip"
         echo " "
-        echo "I will archive $count files in $zipfolder that contain the string \"$3\""
-    	  else
-        	if [[ -f $dest/$zipname/$zipname-$basedest.zip ]]
-				then
-		   		echo "Zip file $dest/$zipname/$zipname-$basedest.zip already exists, skipping."
-      		echo " "
-				else
-      			mkdir -p $dest/$zipname/
-        		echo "Zipping $count files in $zipfolder, please wait..."
-#        		for files in $filelist; do
-	        		zip -jq1 $dest/$zipname/$zipname-$basedest.zip $filelist \;
-#	    		done
-				#depricated	zip -r0 	  $zipfolder/$basezips.zip $filelist
-       			echo "Zip of $zipfolder completed!"
-						echo "The file can be found at $dest/$zipname/$zipname-$basedest.zip"
-						echo " "
-       	  	fi
-							if [[ $3 = png ]] || [[ $3 = dpx ]] || [[ $3 = exr ]] || [[ $3 = tif* ]] || [[ $3 = jp*g ]]; then
-					      if [[ ! -f $dest/$zipname/$zipname-$basedest.mp4 ]]
-									then
-										echo "A reference file will be created at $dest/$zipname/$zipname-$basedest.mp4"
-										ffmpeg -hide_banner -loglevel panic -pattern_type glob \
-										-y -i "$zipfolder/*.$3" -c:v libx264 -b:v 2500k \
-										-pix_fmt yuv420p -r 25 -f mp4 "$dest/$zipname/$zipname-$basedest.mp4"
-										echo " "
-								fi
-							# else
-							# 	echo "Files are not images, no reference video will be created for zipfile."
-						 fi
-       # echo "Truncating files"
-       # $filelist -delete
-   	  fi
-
-   fi
-
-done
-
-echo " "
-echo "Nothing else to do!"
-
-# # # CODE FROM OLD VERSION # # #
-# function 	count {
-#   				[[ $(find $zipfolder -mindepth 1 -maxdepth 1 -type f  | wc -l) ]]
-#   	}
-#
-# filelist=$(find $zipfolder -mindepth 1 -maxdepth 1 -type f)
-#         #
-#         # echo $filelist
-#         echo ${#filelist[@]}
-
-
-## Make a video from an image sequence with 4 trailing digits:
-## ffmpeg -y -i /foo/bar_%04d.png -c:v libx264 -b:v 2500k -pix_fmt yuv420p -r 25 -f mp4 /foo/bar.mp4
-
-## or with no trailing digits or regular pattern:
-## ffmpeg -y -i /foo/bar*.png -c:v libx264 -b:v 2500k -pix_fmt yuv420p -r 25 -f mp4 /foo/bar.mp4
+        echo "Will archive $count files in $zipfolder that contain the string $sstring"
+        echo "And create a reference file at $output.zip"
+      else
+        if [[ -f $output.zip ]]; then
+        echo "Zip file $output.zip already exists, skipping."
+        echo " "
+        else
+          mkdir -p "$dest"/"$zipname"/
+          echo "Zipping $count files in $zipfolder, please wait..."
+          zip -jq1 "$output".zip "$filelist" \;
+          echo "Zip of $zipfolder completed!"
+          echo "The file can be found at $output.zip"
+          echo " "
+        fi
+        if [[ $sstring = png ]] || [[ $sstring = dpx ]] || [[ $sstring = exr ]] || [[ $sstring = tif* ]] || [[ $sstring = jp*g ]]; then
+          if [[ ! -f $output.mp4 ]]; then
+            echo "A reference file will be created at $output.mp4"
+            echo " "
+            makeref
+          elif [[ -f $output.mp4 ]]; then
+            echo "A reference file for this zip already existst."
+            echo "Overwrite? y/n"
+            select yn in "Yes" "No"; do
+                case $yn in
+                    Yes ) makeref; break;;
+                    No ) echo "Not creating reference file" && exit;;
+                esac
+            done
+          fi
+        fi
+      fi
+    fi
+  done
+  echo " "
+  echo "All done!"
+fi
