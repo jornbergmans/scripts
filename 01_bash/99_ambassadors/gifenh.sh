@@ -12,27 +12,42 @@ IFS=$'\n'
 # 	"
 #
 # else
-if [ -z "$1" ]; then
+if [[ -z $1 ]] || [[ -z $2 ]] || [[ -z $3 ]]; then
 	echo "Please input folder"
 	read inputfolder
 	echo "Please input desired output framerate"
 	read outputrate
-	echo "Please input desired output height in pixels"
+	echo "Please input desired output height in pixels. (input -1 for original size)"
 	read rez
 	echo "Do you want to enable debug mode? y/n"
-	read debug
+	select yn in "Yes" "No"; do
+		case $yn in
+			Yes ) debug=y; break;;
+			No) debug=n; break;;
+		esac
+	done
 else
 	inputfolder="$1"
 	outputrate="$2"
 	rez="$3"
 	debug="$4"
 fi
-filelist=$(find "$inputfolder" -iname "*.mov" -not -iname "._*")
+
+echo "Input set, creating file list"
+
+inputfolder=$(echo "$inputfolder" | sed 's/[[:space:]]$//;s:\/$::')
+filelist=$(find "$inputfolder" -iname "*.mov" -or -iname "*.mp4" -or -iname "*.mkv" -or -iname "*.avi" -or -iname "*.wmv" -or -iname "*.mxf" -and -not -iname "._*")
+
+if [[ $rez = '-1' ]]; then
+	rezname='original-resolution_'
+else
+	rezname="$rez"
+fi
 
  for f in $filelist; do
  	 basef=$(basename "$f")
 	 dirf=$(dirname "$f")
-	 outputdir="$dirf"/gif-"$rez"p"$outputrate"
+	 outputdir="$dirf"/gif-"$rezname"p"$outputrate"
 	 mkdir -p "$outputdir"
 		if [[ ! "$debug" = '' ]] && [[ "$debug" = 'y' ]]; then
 		 echo "- - - -"
@@ -44,12 +59,19 @@ filelist=$(find "$inputfolder" -iname "*.mov" -not -iname "._*")
 		 echo "basef is $basef"
 		 echo "- - - -"
  		else
-		 echo "Creating palette for $basef"
-				ffmpeg -hide_banner -loglevel panic -y -i "$f" -vf fps=10,scale=-1:1080:flags=lanczos,palettegen "$outputdir/${basef/.mov/_palette.png}"
+#		 echo "Creating palette for $basef"
+				ffmpeg -hide_banner -loglevel panic -y -i "$f" -vf fps=10,scale=-1:1080:flags=lanczos,palettegen "$outputdir"/."${basef/.mov/_palette.png}"
 		 echo "Creating GIF file at $outputrate frames per second"
-				ffmpeg -hide_banner -loglevel panic -y -i "$f" -i "$outputdir"/"${basef/.mov/_palette.png}" -filter_complex \
-				"fps=$outputrate,scale=-1:$rez:flags=lanczos[x];[x][1:v]paletteuse" -f gif "$outputdir/${basef/.mov/_"$rez"p"$outputrate".gif}"
-		 echo "GIF file created at $outputdir/${basef/.mov/_"$rez"p"$outputrate".gif}"
+				ffmpeg -hide_banner -loglevel panic -y -i "$f" -i "$outputdir"/."${basef/.mov/_palette.png}" -filter_complex \
+				"fps=$outputrate,scale=-1:$rez:flags=lanczos[x];[x][1:v]paletteuse" -f gif "$outputdir/${basef/.mov/_"$rezname"p"$outputrate".gif}"
+		 if [[ ! "$debug" = '' ]] || [[ "$debug" = 'n' ]]; then
+			rm -f "$outputdir"/."${basef/.mov/_palette.png}"
+		 fi
+		 if [[ -f "$outputdir/${basef/.mov/_"$rezname"p"$outputrate".gif}" ]]; then
+			 echo "GIF file created at $outputdir/${basef/.mov/_"$rezname"p"$outputrate".gif}"
+	 	 elif [[ ! -f "$outputdir/${basef/.mov/_"$rezname"p"$outputrate".gif}" ]]; then
+		 	 echo "Output file not found, please run in debug mode."
+		 fi
 		 echo ""
 	 	fi
 done

@@ -2,9 +2,15 @@
 IFS=$'\n'
 
 zipdir="$1"
-dest="$2"
+dest=$(echo "$2" | sed 's:\/$::')
 sstring="$3"
 debug="$4"
+
+function makezip() {
+  mkdir -p "$dest"/"$basedirdest"/
+  echo "Zipping $count files in $zipfolder, please wait..."
+  zip -jq1 "$output".zip $filelist
+}
 
 function makeref() {
   ffmpeg -hide_banner -loglevel panic -pattern_type glob \
@@ -25,54 +31,77 @@ if [[ -z "$1" ]] && [[ -z "$2" ]] && [[ -z "$3" ]]; then
   echo "3: Search string"
   echo "4: Debug mode - input 'false' to run live mode"
 else
+
   zipfolders=$(find "$zipdir" -depth -type d)
 
   for zipfolder in $zipfolders; do
-
     filelist=$(find "$zipfolder" -mindepth 1 -maxdepth 1 -type f -and -iname "*$sstring*" -and -not -iname ".*" -and -not -iname "*.zip")
     count=$(find "$zipfolder" -mindepth 1 -maxdepth 1 -type f -and -iname "*$sstring*" -and -not -iname ".*" -and -not -iname "*.zip" | wc -l)
 
     basedest=$(basename "$zipfolder")
     dirdest=$(dirname "$zipfolder")
-    zipname=$(basename "$dirdest")
-    output="$dest"/"$zipname"/360_"$zipname"_"$basedest"
+    basedirdest=$(basename "$dirdest")
+    output="$dest"/"$basedirdest"/360_"$basedirdest"_"$basedest"
+    outfilename=$(basename "$output")
 
+# We only want to run this whole part if there's more than one
+# image in the source folder. So, let's wrap this in a test clause:
     if [[ "$count" -gt 1 ]]; then
       if [[ ! "$debug" = false ]] ; then
+        echo "Running in debug mode. Input argument 'false' to run live mode."
+        echo " "
+        echo "Variables set to:"
         echo "basedest = $basedest"
         echo "dirdest = $dirdest"
-        echo "zipname = $zipname"
+        echo "basedirdest = $basedirdest"
         echo "full output path will be $output.zip"
         echo " "
         echo "Will archive $count files in $zipfolder that contain the string $sstring"
-        echo "And create a reference file at $output.zip"
+        echo "And create a reference file at $output.mp4"
       else
+# If we're running live mode, this is the part that creates the zip.
         if [[ -f $output.zip ]]; then
-        echo "Zip file $output.zip already exists, skipping."
-        echo " "
+          echo "Zip file $outfilename.zip already exists."
+          echo "Overwrite? (y/n)"
+          select yn in "Yes" "No"; do
+              case $yn in
+                Yes ) rm -f "$output".zip && makezip;;
+                No ) skip;;
+              esac
+          done
         else
-          mkdir -p "$dest"/"$zipname"/
-          echo "Zipping $count files in $zipfolder, please wait..."
-          zip -jq1 "$output".zip "$filelist" \;
+          makezip
+        fi
+# Error handling if there was a problem creating the zip file.
+        if [[ -f $output.zip ]]; then
           echo "Zip of $zipfolder completed!"
           echo "The file can be found at $output.zip"
-          echo " "
+        else
+          echo "Zip error, please run in debug mode."
+          exit 1
         fi
+
+      echo " "
+
+# This is the part where we make the ref video.
         if [[ $sstring = png ]] || [[ $sstring = dpx ]] || [[ $sstring = exr ]] || [[ $sstring = tif* ]] || [[ $sstring = jp*g ]]; then
-          if [[ ! -f $output.mp4 ]]; then
+          if [[ -f $output.mp4 ]]; then
+            echo "A reference file for this zip already existst."
+            echo "Overwrite? (y/n)"
+            select yn in "Yes" "No"; do
+              case $yn in
+                  Yes ) makeref; break;;
+                  No ) echo "Not creating reference file. Stopping jobs." && exit;;
+              esac
+            done
+          elif [[ ! -f $output.mp4 ]]; then
             echo "A reference file will be created at $output.mp4"
             echo " "
             makeref
-          elif [[ -f $output.mp4 ]]; then
-            echo "A reference file for this zip already existst."
-            echo "Overwrite? y/n"
-            select yn in "Yes" "No"; do
-                case $yn in
-                    Yes ) makeref; break;;
-                    No ) echo "Not creating reference file" && exit;;
-                esac
-            done
           fi
+        else
+          echo "$sstring does not indicate a supported image sequence."
+          echo "Can not create reference video."
         fi
       fi
     fi
