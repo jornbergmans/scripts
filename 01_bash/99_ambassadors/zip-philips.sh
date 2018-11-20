@@ -2,9 +2,9 @@
 IFS=$'\n'
 
 zipdir="$1"
-dest=$(echo "$2" | sed 's:\/$::')
-sstring="$3"
-debug="$4"
+dest=$(echo "$1" | sed 's:\/$::')
+sstring="$2"
+debug="$3"
 
 function makezip() {
   mkdir -p "$dest"/"$basedirdest"/
@@ -24,12 +24,11 @@ if [[ ! "$debug" = false ]] ; then
   echo ""
 fi
 
-if [[ -z "$1" ]] && [[ -z "$2" ]] && [[ -z "$3" ]]; then
+if [[ -z "$zipdir" ]] && [[ -z "$dest" ]]; then
   echo "Variables not set. Please input"
   echo "1: Input folder"
-  echo "2: Dest folder"
-  echo "3: Search string"
-  echo "4: Debug mode - input 'false' to run live mode"
+  echo "2: Search string"
+  echo "3: Debug mode - input 'false' to run live mode"
 else
 
   zipfolders=$(find "$zipdir" -depth -type d)
@@ -41,7 +40,7 @@ else
     basedest=$(basename "$zipfolder")
     dirdest=$(dirname "$zipfolder")
     basedirdest=$(basename "$dirdest")
-    output="$dest"/"$basedirdest"/360_"$basedirdest"_"$basedest"
+    output="$dest"/"$basedirdest"/"$basedirdest"_360_"$basedest"
     outfilename=$(basename "$output")
 
 # We only want to run this whole part if there's more than one
@@ -65,8 +64,13 @@ else
           echo "Overwrite? (y/n)"
           select yn in "Yes" "No"; do
               case $yn in
-                Yes ) rm -f "$output".zip && makezip;;
-                No ) skip;;
+                Yes )
+			echo "Removing old zipfile and creating new version."
+			rm -f "$output".zip && makezip;;
+                No )
+			echo "Skipping zip file creation for $outfilename"
+			break
+			continue;;
               esac
           done
         else
@@ -91,11 +95,13 @@ else
             select yn in "Yes" "No"; do
               case $yn in
                   Yes ) makeref; break;;
-                  No ) echo "Not creating reference file. Stopping jobs." && exit;;
+                  No )  echo "Not creating reference file. Stopping jobs."
+			break
+			continue;;
               esac
             done
           elif [[ ! -f $output.mp4 ]]; then
-            echo "A reference file will be created at $output.mp4"
+            echo "Creating reference file for $outfilename."
             echo " "
             makeref
           fi
@@ -103,6 +109,12 @@ else
           echo "$sstring does not indicate a supported image sequence."
           echo "Can not create reference video."
         fi
+	if [[ -f $output.mp4 ]]; then
+	  echo "Reference file located at $outname.mp4"
+	else
+	  echo "Error creating reference file. Please run in debug mode."
+	  exit 1
+	fi
       fi
     fi
   done
