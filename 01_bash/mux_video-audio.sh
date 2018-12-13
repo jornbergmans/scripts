@@ -2,9 +2,9 @@
 # #!/usr/local/bin/bash
 #Purpose = to mux video and audio
 #Created on 29-12-2017
-#Modified on 27-06-2018
+#Modified on 06-08-2018
 #Author = Berry van Voorst
-Version="Mux v0.8.2"
+Version="Mux v0.8.4 / cmd alias: mux"
 
 command -v ffmpeg &> /dev/null
 if [ $? -eq 1 ]; then
@@ -28,6 +28,7 @@ echo "---------------------------------------------------"
 
 date=$(date +%Y%m%d)
 time=$(date +%H%M)
+defaultpath="/Volumes/Media2/EPISODE_OUT"
 
 read -p 'Enter name of movie(drag the movie into the cmd window): ' input
 # read -p 'Enter video resolution(for example 1920x1080): ' size
@@ -41,7 +42,7 @@ read -p 'Enter name of movie(drag the movie into the cmd window): ' input
 
 framerate=$(ffprobe -v error -select_streams v:0 -show_entries stream=avg_frame_rate -of default=noprint_wrappers=1:nokey=1 "$input")
 
-echo "Audio?(enter a number 1 or 2)"
+echo "Audio?(enter a number 1 or 2, 'no' result in a MUTE file)"
 select askforaudio in "yes" "no"; do
      case $askforaudio in
          yes ) answeraudio="yes"; break;;
@@ -59,7 +60,8 @@ ffmpeg -hide_banner -nostats -i "$inputaudio" -filter_complex ebur128 -f null -
 durvideo=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -sexagesimal "$input")
 duraudio=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 -sexagesimal "$inputaudio")
 if [[ "$duraudio" = "$durvideo" ]]; then
-  read -p 'Enter path for output folder(drag output folder into the cmd window): ' path
+  read -e -i "$defaultpath" -p 'Enter path for output folder(drag output folder into the cmd window): ' otherpath
+  path="${otherpath:-$defaultpath}"
   inputoutput=$(basename "$input")
   inputoutput2="${inputoutput%.*}"
   read -e -i "$inputoutput2"_$date-$time.mov -p 'Enter output name: ' outputname
@@ -71,7 +73,8 @@ else
   fout="!!! Audio file duration of $duraudio does not match Video file duration of $durvideo !!!"
   osascript -e 'tell app "System Events" to display dialog "'"${fout}"'" buttons {"Cancel", "Continue"}' >/dev/null 2>&1
   if [ $? -eq 0 ]; then
-    read -p 'Enter path for output folder(drag output folder into the cmd window): ' path
+    read -e -i "$defaultpath" -p 'Enter path for output folder(drag output folder into the cmd window): ' otherpath
+    path="${otherpath:-$defaultpath}"
     inputoutput=$(basename "$input")
     inputoutput2="${inputoutput%.*}"
     read -e -i "$inputoutput2"_$date-$time.mov -p 'Enter output name: ' outputname
@@ -89,16 +92,19 @@ if [[ "$?" != "0" ]]; then
 
   echo "ffmpeg info: bash script mux_video-audio.sh (${Version})
 
+  /usr/local/bin/ffmpeg -hide_banner -loglevel warning -i $input -i $inputaudio -map 0:v -map 1:a -c copy -y $path/${output}
+
   -VIDEO INPUT: ${input}
   -AUDIO INPUT: ${inputaudio}
   -FRAME RATE: ${framerate}
-  -OUTPUT FILE: $path/${output}" >> $path/"${output}_log.txt"
+  -OUTPUT FILE: $path/${output}" >> $path/"${output}.log"
 
   osascript -e 'set alertResult to display alert "All files converted with ffmpeg converter!" buttons {"OK"} as warning'
   exit 1
 fi
 
-read -p 'Enter path for output folder(drag output folder into the cmd window): ' path
+read -e -i "$defaultpath" -p 'Enter path for output folder(drag output folder into the cmd window): ' otherpath
+path="${otherpath:-$defaultpath}"
 inputoutput=$(basename "$input")
 inputoutput2="${inputoutput%.*}"
 read -e -i "$inputoutput2"_$date-$time.mov -p 'Enter output name: ' outputname
@@ -112,10 +118,12 @@ fi
 
 echo "ffmpeg info: bash script mux_video-audio.sh (${Version})
 
+/usr/local/bin/ffmpeg -hide_banner -loglevel warning -i $input -an -c:v copy -y $path/${output}
+
 -VIDEO INPUT: ${input}
 -AUDIO INPUT: NO AUDIO
 -FRAME RATE: ${framerate}
--OUTPUT FILE: $path/${output}" >> $path/"${output}_log.txt"
+-OUTPUT FILE: $path/${output}" >> $path/"${output}.log"
 
   osascript -e 'set alertResult to display alert "All files converted with ffmpeg converter!" buttons {"OK"} as warning'
   exit 1

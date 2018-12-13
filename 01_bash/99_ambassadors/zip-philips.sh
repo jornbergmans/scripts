@@ -14,7 +14,7 @@ function makezip() {
 
 function makeref() {
   ffmpeg -hide_banner -loglevel panic -pattern_type glob \
-  -y -i "$zipfolder/*.$sstring" -c:v libx264 -b:v 2500k \
+  -y -i "$zipfolder/*.$sstring" -c:v libx264 -b:v 5000k \
   -pix_fmt yuv420p -r 25 -f mp4 "$output.mp4"
 }
 
@@ -110,7 +110,7 @@ else
           echo "Can not create reference video."
         fi
 	if [[ -f $output.mp4 ]]; then
-	  echo "Reference file located at $outname.mp4"
+	  echo "Reference file located at "$outname".mp4"
 	else
 	  echo "Error creating reference file. Please run in debug mode."
 	  exit 1

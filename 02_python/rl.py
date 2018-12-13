@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 """Script to combine audio and video files of the same length.
 
 Checks input files for length up to 6 decimals using ffprobe,
