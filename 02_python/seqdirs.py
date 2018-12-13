@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/envpython3
 
 import sys
 import os
@@ -9,7 +9,7 @@ import subprocess as sp
 import utils
 
 ffmpeg_inString = [
-    '/usr/local/bin/ffmpeg',
+    '/usr/bin/env', 'ffmpeg',
     '-hide_banner',
     '-loglevel', 'error',
     '-thread_queue_size', '512',

@@ -24,7 +24,7 @@ basev = os.path.basename(vin)
 now = datetime.datetime.now().strftime('%Y%m%d-%H%M')
 
 probe_header = [
-    '/usr/local/bin/ffprobe',
+    '/usr/bin/env', 'ffprobe',
     '-v', 'error',
     '-hide_banner',
 ]
@@ -65,7 +65,8 @@ outlog = os.path.join(
 )
 
 ff_header = [
-    '/usr/local/bin/ffmpeg', '-hide_banner',
+    '/usr/bin/env/', 'ffmpeg',
+    '-hide_banner',
     '-loglevel', 'warning',
     '-stats',
     '-y',

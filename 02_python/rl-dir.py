@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 """Script to combine audio and video files of the same length.
 
 Checks input files for length up to 6 decimals using ffprobe,
@@ -26,7 +26,7 @@ outfolder = sys.argv[4]
 now = datetime.datetime.now().strftime('%Y%m%d-%H%M')
 
 probe_header = [
-    '/usr/local/bin/ffprobe',
+    '/usr/bin/env', 'ffprobe',
     '-v', 'error',
     '-hide_banner',
 ]
@@ -45,7 +45,7 @@ else:
     outext = ".mp4"
 
 ff_header = [
-    '/usr/local/bin/ffmpeg', '-hide_banner',
+    '/usr/bin/env', 'ffmpeg', '-hide_banner',
     '-loglevel', 'warning',
     '-stats',
     '-y',

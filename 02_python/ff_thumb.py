@@ -1,10 +1,10 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 
 # import sys
 import os
 
 ffprobeString = [
-    '/usr/local/bin/ffprobe',
+    '/usr/bin/env', 'ffprobe',
     '-hide_banner', '-loglevel panic', '-pretty',
     '-select_streams', 'v:0',
     '-show_entries', 'stream=nb_frames',
@@ -12,7 +12,7 @@ ffprobeString = [
 ]
 
 ffInString = [
-    '/usr/local/bin/ffmpeg',
+    '/usr/bin/env', 'ffmpeg',
     '-hide_banner',
     '-loglevel', 'error',
 ]

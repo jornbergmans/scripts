@@ -19,7 +19,7 @@ import json
 v_in = sys.argv[1]
 
 json_arguments = [
-    '/usr/local/bin/ffprobe',
+    '/usr/bin/env', 'fprobe',
     '-v', 'error',
     '-hide_banner',
     '-show_streams',
