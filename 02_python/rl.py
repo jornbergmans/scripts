@@ -65,7 +65,7 @@ outlog = os.path.join(
 )
 
 ff_header = [
-    '/usr/bin/env/', 'ffmpeg',
+    '/usr/bin/env', 'ffmpeg',
     '-hide_banner',
     '-loglevel', 'warning',
     '-stats',
