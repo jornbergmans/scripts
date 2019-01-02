@@ -18,11 +18,11 @@ function makeref() {
   -pix_fmt yuv420p -r 25 -f mp4 "$output.mp4"
 }
 
-if [[ ! "$debug" = false ]] ; then
-  echo ""
-  echo "Debug mode on. Checking for folders to zip, please wait..."
-  echo ""
-fi
+# if [[ ! "$debug" = false ]] ; then
+#   echo ""
+#   echo "Debug mode on. Checking for folders to zip, please wait..."
+#   echo ""
+# fi
 
 if [[ -z "$zipdir" ]] && [[ -z "$dest" ]]; then
   echo "Variables not set. Please input"
@@ -35,7 +35,7 @@ else
 
   for zipfolder in $zipfolders; do
     filelist=$(find "$zipfolder" -mindepth 1 -maxdepth 1 -type f -and -iname "*$sstring*" -and -not -iname ".*" -and -not -iname "*.zip")
-    count=$(find "$zipfolder" -mindepth 1 -maxdepth 1 -type f -and -iname "*$sstring*" -and -not -iname ".*" -and -not -iname "*.zip" | wc -l)
+    count=$(echo "$filelist" | wc -l)
 
     basedest=$(basename "$zipfolder")
     dirdest=$(dirname "$zipfolder")
@@ -43,40 +43,47 @@ else
     output="$dest"/"$basedirdest"/"$basedirdest"_360_"$basedest"
     outfilename=$(basename "$output")
 
-# We only want to run this whole part if there's more than one
-# image in the source folder. So, let's wrap this in a test clause:
-    if [[ "$count" -gt 1 ]]; then
-      if [[ ! "$debug" = false ]] ; then
-        echo "Running in debug mode. Input argument 'false' to run live mode."
-        echo " "
-        echo "Variables set to:"
-        echo "basedest = $basedest"
-        echo "dirdest = $dirdest"
-        echo "basedirdest = $basedirdest"
-        echo "full output path will be $output.zip"
-        echo " "
-        echo "Will archive $count files in $zipfolder that contain the string $sstring"
-        echo "And create a reference file at $output.mp4"
-      else
-# If we're running live mode, this is the part that creates the zip.
+# In debug mode, we'll list all the variables and then exit
+    if [[ ! "$debug" = false ]] ; then
+      echo "Running in debug mode. Input argument 'false' to run live mode."
+      echo " "
+      echo "Variables set to:"
+      echo "basedest = $basedest"
+      echo "dirdest = $dirdest"
+      echo "basedirdest = $basedirdest"
+      echo "full output path will be $output.zip"
+      echo " "
+      echo "Will archive $count files in $zipfolder that contain the string $sstring"
+      echo "And create a reference file at $output.mp4"
+      exit 1
+    else
+
+  # We only want to run this whole part if there's more than one
+  # image in the source folder. So, let's wrap this in a test clause:
+      if [[ "$count" -gt 1 ]]; then
+
+  # If we're running live mode, this is the part that creates the zip.
         if [[ -f $output.zip ]]; then
           echo "Zip file $outfilename.zip already exists."
           echo "Overwrite? (y/n)"
           select yn in "Yes" "No"; do
               case $yn in
                 Yes )
-			echo "Removing old zipfile and creating new version."
-			rm -f "$output".zip && makezip;;
+            			echo "Removing old zipfile and creating new version."
+            			rm -f "$output".zip
+                  makezip
+                  break
+                  continue;;
                 No )
-			echo "Skipping zip file creation for $outfilename"
-			break
-			continue;;
+            			echo "Skipping zip file creation for $outfilename"
+            			break
+            			continue;;
               esac
           done
         else
-          makezip
+            makezip
         fi
-# Error handling if there was a problem creating the zip file.
+  # Error handling if there was a problem creating the zip file.
         if [[ -f $output.zip ]]; then
           echo "Zip of $zipfolder completed!"
           echo "The file can be found at $output.zip"
@@ -84,20 +91,21 @@ else
           echo "Zip error, please run in debug mode."
           exit 1
         fi
+        echo " "
 
-      echo " "
-
-# This is the part where we make the ref video.
+  # This is the part where we make the ref video, if the search string was a supported image format.
         if [[ $sstring = png ]] || [[ $sstring = dpx ]] || [[ $sstring = exr ]] || [[ $sstring = tif* ]] || [[ $sstring = jp*g ]]; then
           if [[ -f $output.mp4 ]]; then
-            echo "A reference file for this zip already existst."
+            echo "A reference video for this zip already existst."
             echo "Overwrite? (y/n)"
             select yn in "Yes" "No"; do
               case $yn in
-                  Yes ) makeref; break;;
-                  No )  echo "Not creating reference file. Stopping jobs."
-			break
-			continue;;
+                Yes ) makeref
+                      break
+                      continue;;
+                No )  echo "Not creating reference file. Stopping jobs."
+                			break
+                			exit 1
               esac
             done
           elif [[ ! -f $output.mp4 ]]; then
@@ -109,15 +117,15 @@ else
           echo "$sstring does not indicate a supported image sequence."
           echo "Can not create reference video."
         fi
-	if [[ -f $output.mp4 ]]; then
-	  echo "Reference file located at "$outname".mp4"
-	else
-	  echo "Error creating reference file. Please run in debug mode."
-	  exit 1
-	fi
+  # Let the user know what happened with that ref video.
+        if [[ -f $output.mp4 ]]; then
+      	  echo "Reference file located at $output.mp4"
+      	else
+      	  echo "Error creating reference file. Please run in debug mode."
+      	  exit 1
+      	fi
       fi
     fi
+    echo " "
   done
-  echo " "
-  echo "All done!"
 fi
