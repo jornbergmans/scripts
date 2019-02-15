@@ -4,57 +4,61 @@
 
 while read -r projectname && [[ -n $projectname ]]; do
 
-  if [[ "$projectname" = PHILIPS*_p* ]]; then
-    brandtest="phil"
-  elif [[ "$projectname" = BOOKING*_p* ]]; then
-    brandtest="book"
-  else
-    brandtest="false"
-  fi
+runningprocess=$(ps aux | grep rsync | grep $projectname)
+
+if [[ $runningprocess = "" ]]; then
 
   projectyear=$(echo "$projectname" | sed 's/^.*_p//;s/[0-9]\{5\}$//')
 
-  echo "Syncing $projectname"
-  # echo $brandtest
-  # echo $projectyear
-
-# # # # # # # # # # # #
-# SYNC TO NYC OFFICE  #
-# # # # # # # # # # # #
-
-  # rsync -azvh /ODIN/_WORK/"$projectname" /Volumes/FREYA/VFX/WORK/
-
-  if [[ $brandtest == "phil" ]]; then
-     rsync -azvh /AMBASSADORS_SHARED/PROJECTS/PHILIPS/"$projectname" /Volumes/FREYA/PROJECTS/BRANDS/PHILIPS/
-  elif [[ $brandtest == "book" ]]; then
-     rsync -azvh /AMBASSADORS_SHARED/PROJECTS/BOOKING/"$projectname" /Volumes/FREYA/PROJECTS/BRANDS/BOOKING/
+  if [[ "$projectname" = PHILIPS*_p* ]]; then
+    freyapath="vtr@10.0.20.10:/volume1/FREYA/PROJECTS/BRANDS/PHILIPS"
+    hqpath="/AMBASSADORS_SHARED/PROJECTS/PHILIPS"
+  elif [[ "$projectname" = BOOKING*_p* ]]; then
+    freyapath="vtr@10.0.20.10:/volume1/FREYA/PROJECTS/BRANDS/BOOKING"
+    hqpath="/AMBASSADORS_SHARED/PROJECTS/BOOKING"
   else
-     rsync -azvh /AMBASSADORS_SHARED/PROJECTS/"$projectname" /Volumes/FREYA/PROJECTS/AGENCIES/
+    freyapath="vtr@10.0.20.10:/volume1/FREYA/PROJECTS/AGENCIES"
+    hqpath="/AMBASSADORS_SHARED/PROJECTS/p$projectyear"
   fi
 
-# # # # # # # # # # # #
-# SYNC TO AMS OFFICE  #
-# # # # # # # # # # # #
+  # # # # # # # # # # # #
+  #       PROJECTS      #
+  # # # # # # # # # # # #
 
-if [[ $brandtest == "phil" ]]; then
-   rsync -azvh /Volumes/FREYA/PROJECTS/BRANDS/PHILIPS/"$projectname" /AMBASSADORS_SHARED/PROJECTS/PHILIPS/
-elif [[ $brandtest == "book" ]]; then
-   rsync -azvh /Volumes/FREYA/PROJECTS/BRANDS/BOOKING/"$projectname" /AMBASSADORS_SHARED/PROJECTS/BOOKING/
-else
-   rsync -azvh /Volumes/FREYA/PROJECTS/AGENCIES/"$projectname" /AMBASSADORS_SHARED/PROJECTS/
+  echo "Syncing Project from $hqpath/$projectname" to "$freyapath/$projectname"
+  rsync -Pazvh -f"- .*" -f"- @*" "$hqpath/$projectname" "$freyapath/"
+
+  echo "Syncing from $freyapath/$projectname" to "$hqpath/$projectname"
+  rsync -Pazvh -f"- .*" -f"- @*" "$freyapath/$projectname" "$hqpath/"
+
+  # # # # # # # # # # # #
+  #     FLAME ARCHS     #
+  # # # # # # # # # # # #
+
+  if [[ -d /HAMMER/FLAME-ARCHIVES/TO-NY/$projectname ]]; then
+    echo "Syncing Flame Archives from /HAMMER/FLAME-ARCHIVES/TO-NY/$projectname to /FREYA/FLAME/FROM_HQ"
+    rsync -Pazvh -f"- .*" -f"- @*" /HAMMER/FLAME-ARCHIVES/TO-NY/$projectname vtr@10.0.20.10:/volume1/FREYA/FLAME/FROM_HQ/
+  fi
+
+  if [[ -d /FREYA/FLAME/TO_HQ/$projectname ]]; then
+    echo "Syncing Flame Archives from /FREYA/FLAME/TO_HQ/$projectname to /HAMMER/FLAME-ARCHIVES/FROM-NY/"
+    rsync -Pazvh -f"- .*" -f"- @*" vtr@10.0.20.10:/volume1/FREYA/FLAME/TO_HQ/$projectname /HAMMER/FLAME-ARCHIVES/FROM-NY/
+  fi
+
+  # # # # # # # # # # # #
+  #     SYNC FINALS     #
+  # # # # # # # # # # # #
+
+  if [[ "$projectyear" != 18 ]]; then
+    if [[ -d vtr@10.0.20.10:/volume1/FREYA/FINALS/p"$projectyear"/"$projectname" ]] && [[ -d /ODIN/LIBRARY/pFINALS/p"$projectyear"/"$projectname" ]]; then
+      rsync -Pazvh --no-p -f"- .*" -f"- @*" vtr@10.0.20.10:/volume1/FREYA/FINALS/p"$projectyear"/"$projectname" /ODIN/LIBRARY/pFINALS/p"$projectyear"/
+    fi
+  else
+    if [[ -d vtr@10.0.20.10:/volume1/FREYA/FINALS/p"$projectyear"/"$projectname" ]] && [[ -d /ODIN/LIBRARY/pFINALS/p"$projectyear"/"$projectname" ]]; then
+      rsync -Pazvh --no-p -f"- .*" -f"- @*" vtr@10.0.20.10:/volume1/FREYA/FINALS/p"$projectyear"/"$projectname" /ODIN/LIBRARY/pFINALS/p"$projectyear"/
+    fi
+  fi
+
 fi
 
-# # # # # # # # # # # #
-#     SYNC FINALS     #
-# # # # # # # # # # # #
-
-if [[ "$projectyear" != 18 ]]; then
-  if [[ -d /Volumes/FREYA/FINALS/p"$projectyear"/"$projectname" ]] && [[ -d /ODIN/LIBRARY/pFINALS/p"$projectyear"/"$projectname" ]]; then
-    rsync -azvh /Volumes/FREYA/FINALS/p"$projectyear"/"$projectname" /ODIN/LIBRARY/pFINALS/p"$projectyear"/
-  fi
-else
-  if [[ -d /Volumes/FREYA/FINALS/p"$projectyear"/"$projectname" ]] && [[ -d /ODIN/LIBRARY/pFINALS/"$projectname" ]]; then
-    rsync -azvh /Volumes/FREYA/FINALS/p"$projectyear"/"$projectname" /ODIN/LIBRARY/pFINALS/
-  fi
-fi
 done < /AMBASSADORS_SHARED/STUDIO/sync-to-nyc.txt
