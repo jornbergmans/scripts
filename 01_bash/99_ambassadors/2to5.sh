@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+front_left="$1"
+front_right="$2"
+front_center="$3"
+lfe="$4"
+back_left="$5"
+back_right="$6"
+outputname="$7"
+
 if [[ -z $1 ]] || [[ -z $2 ]] || [[ -z $3 ]]; then
   echo "Input Left channel"
 	read front_left
