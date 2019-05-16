@@ -1,46 +1,41 @@
 #!/usr/bin/env bash
-IFS=$'\n'
 
+IFS=$'\n'
 datetime=$(date +%Y%m%d-%H%M)
 
 # # # # # # # # # # # #
 # The Hammer Chapter  #
 # # # # # # # # # # # #
 
-
-# echo "DISK USAGE ON /AMBASSADORS_SHARED, FOLDER PATH" > /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/hammer/hammer_$datetime.csv
-du -kd1 /AMBASSADORS_SHARED | sort -nr | sed $'s/[[:blank:]]/,/;s/\/.*\///;s/[[:space:]]/-/g;s/\///g;/\,\./d' >> /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/hammer/shared/shared_$datetime.csv
-# echo " "
-# echo "DISK USAGE ON /HAMMER, FOLDER PATH" >> /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/hammer/hammer_$datetime.csv
-du -kd1 /HAMMER | sed $'s/[[:blank:]]/,/;s/\/.*\///;s/[[:space:]]/-/g;s/\///g;/\,\./d' | sort -nr >> /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/hammer/hammer/hammer_$datetime.csv
-# | sed $'s/[[:blank:]]/,/;s/\/.*\///' | sed '/\(\..*\)/d;s/\///g;s/[[:space:]]/-/g' \
+du -kd1 /AMBASSADORS_SHARED | sort -nr | sed $'s/[[:blank:]]/,/;s/\/.*\///;s/[[:space:]]/-/g;s/\///g;/\,\./d' >> /Volumes/HEIMDALL/LIBRARY/studio/servsizes/servers/hammer/shared/shared_$datetime.csv
+#
+du -kd1 /HAMMER | sed $'s/[[:blank:]]/,/;s/\/.*\///;s/[[:space:]]/-/g;s/\///g;/\,\./d' | sort -nr >> /Volumes/HEIMDALL/LIBRARY/studio/servsizes/servers/hammer/hammer/hammer_$datetime.csv
 
 # # # # # # # # # # # #
 #    The Projects     #
 # # # # # # # # # # # #
 
-find /AMBASSADORS_SHARED/PROJECTS/ -type d -and -iname "*_p1??????" -and -not -ipath "*_p1??????/*_p1??????*" -exec du -kd0 {} \; | sed $'s/[[:blank:]]/,/;s/\/.*\///;s/[[:space:]]/-/g;s/\///g;/\,\./d' | sort -nr  >> /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/projs/projdirs_$datetime.csv
-  # | sed 's/[[:space:]]/,/g;s/\/.*\///' | sed '/\(\..*\)/d;s/\///g;s/[[:blank:]]/-/g' \
-  # 's/\/.*\///;s/\(\,[[:blank:]]\]\,\)/\]\,/g;s/[[:space:]]/-/g;s/\///g;/\,\./d'
-
+find /AMBASSADORS_SHARED/PROJECTS/ -type d -and -iname "*_p1??????" -and -not -ipath "*_p1??????/*_p1??????*" -exec du -kd0 {} \; | sed $'s/[[:blank:]]/,/;s/\/.*\///;s/[[:space:]]/-/g;s/\///g;/\,\./d' | sort -nr  >> /Volumes/HEIMDALL/LIBRARY/studio/servsizes/servers/projs/projdirs_$datetime.csv
 
 # # # # # # # # # # # #
 #   The Odin Chapter  #
 # # # # # # # # # # # #
 
-# echo "DISK USAGE ON ODIN, FOLDER PATH" > /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/odin/odin_$datetime.csv
-du -kd1 /ODIN | sed $'s/[[:blank:]]/,/;s/\/.*\///;s/[[:space:]]/-/g;s/\///g;/\,\./d' | sort -nr >> /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/odin/odin_$datetime.csv
+du -kd1 /ODIN | sed $'s/[[:blank:]]/,/;s/\/.*\///;s/[[:space:]]/-/g;s/\///g;/\,\./d' | sort -nr >> /Volumes/HEIMDALL/LIBRARY/studio/servsizes/servers/odin/odin_$datetime.csv
 #
-find /ODIN/_WORK/ -type d -and -iname "*_p1??????" -and -not -ipath "*_p1??????/*_p1??????*" -exec du -kd0 {} \; | sed 's/[[:blank:]]/,/g;s/\/.*\///' | sed '/\(\..*\)/d;s/\///g;s/[[:space:]]/-/g' | sort -nr >> /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/work/workdirs_$datetime.csv
+find /ODIN/_WORK/ -type d -and -iname "*_p1??????" -and -not -ipath "*_p1??????/*_p1??????*" -exec du -kd0 {} \; | sed 's/[[:blank:]]/,/g;s/\/.*\///' | sed '/\(\..*\)/d;s/\///g;s/[[:space:]]/-/g' | sort -nr >> /Volumes/HEIMDALL/LIBRARY/studio/servsizes/servers/work/workdirs_$datetime.csv
 #
-find /ODIN/LIBRARY/pFINALS/ -type d -and -iname "*_p1??????" -and -not -ipath "*_p1??????/*_p1??????*" -exec du -kd0 {} \; | sed 's/[[:blank:]]/,/g;s/\/.*\///' | sed '/\(\..*\)/d;s/\///g;s/[[:space:]]/-/g' | sort -nr >> /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/fins/pfins_$datetime.csv
+find /ODIN/LIBRARY/pFINALS/ -type d -and -iname "*_p1??????" -and -not -ipath "*_p1??????/*_p1??????*" -exec du -kd0 {} \; | sed 's/[[:blank:]]/,/g;s/\/.*\///' | sed '/\(\..*\)/d;s/\///g;s/[[:space:]]/-/g' | sort -nr >> /Volumes/HEIMDALL/LIBRARY/studio/servsizes/servers/fins/pfins_$datetime.csv
 
 # # # # # # # # # # # #
-#    OBSOLETE CODE    #
+#     The Rushes      #
 # # # # # # # # # # # #
 
-# workdirs=$(find /ODIN/_WORK/ -type d -and -iname "*_p1??????" -and -not -ipath "*_p1??????*/*_p1??????*" -and -not -iname ".*" | sort)
-# for workdir in $workdirs; do
-#   du -kd0 $workdir | sed $'s/[[:blank:]]/,/g;s/\/.*\///' >> /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/odin/workdirs_$datetime.csv
-# done
-# cat /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/odin/workdirs_$datetime.csv | sort -nr > /Volumes/HEIMDALL/AMBASSADORS/users/jorn/servsizes/odin/workdirs_$datetime-sorted.csv
+du -kd1 /RUSHES | sed $'s/[[:blank:]]/,/;s/\/.*\///;s/[[:space:]]/-/g;s/\///g;/\,\./d' | sort -nr >> /Volumes/HEIMDALL/LIBRARY/studio/servsizes/servers/rushes/rushes_$datetime.csv
+
+# # # # # # # # # # # #
+#      Currents       #
+# # # # # # # # # # # #
+
+rm -f /Volumes/HEIMDALL/LIBRARY/studio/servsizes/LATEST/*.csv
+cp "/Volumes/HEIMDALL/LIBRARY/studio/servsizes/servers/{work,projs,rushes}/*_$datetime.csv" /Volumes/HEIMDALL/LIBRARY/studio/servsizes/LATEST/
