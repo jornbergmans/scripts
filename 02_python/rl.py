@@ -90,10 +90,10 @@ ff_422 = [
     '-f', 'mov',
 ]
 
-ff_color = [ 
-    '-vendor', 'ap10', 
-    '-color_primaries', '1', 
-    '-color_trc', '1', 
+ff_color = [
+    '-vendor', 'ap10',
+    '-color_primaries', '1',
+    '-color_trc', '1',
     '-colorspace', '1',
     outname
 ]
@@ -165,6 +165,7 @@ if __name__ == "__main__":
         logfile.write(" ".join(ff_command))
         print("Done! Created file at ", outname)
     else:
+        print("Error creating " + outname)
         print("Length of video and audio files do not match!")
         print("Length of video file is " + str(vint) + " seconds")
         print("Length of audio file is " + str(aint) + " seconds")
